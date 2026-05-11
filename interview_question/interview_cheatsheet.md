@@ -1,815 +1,850 @@
-# ML Engineering Interview — Master Cheatsheet
+# ML 工程师面试 — 速查总表 (Master Cheatsheet)
 
-One-stop reference. Formulas, code, and one-line answers. **Skim before the interview; recall during it.**
+一站式速查：公式、代码、一句话答案。**面试前扫一遍，面试中随时回忆。**
 
-> **Universal tip:** (1) Ask clarifying questions. (2) State assumptions. (3) Verbalize the approach before coding. (4) Test a tiny example. (5) State complexity.
-
----
-
-## Table of Contents
-
-### PART I — MATH, PROBABILITY & STATISTICS *(non-coding)*
-
-1. [Probability — Core Identities](#1-probability--core-identities)
-2. [Distributions Reference Table](#2-distributions-reference-table)
-3. [Expected Value, Variance, Covariance, Correlation — Complete Properties](#3-expected-value-variance-covariance-correlation--complete-properties)
-4. [Gaussian / Normal Distribution — All Angles](#4-gaussian--normal-distribution--all-angles)
-5. [Statistics Fundamentals — Estimation & CLT](#5-statistics-fundamentals--estimation--clt)
-6. [Hypothesis Testing & A/B Testing](#6-hypothesis-testing--ab-testing)
-7. [Expected Value — Problem-Solving Tricks](#7-expected-value--problem-solving-tricks)
-8. [Optimal Stopping — Decision Templates](#8-optimal-stopping--decision-templates)
-9. [Quick Reference — Must-Know Answers](#9-quick-reference--must-know-answers)
-
-### PART II — ML & SYSTEM CONCEPTS *(non-coding)*
-
-10. [Transformer Architecture — Formulas & Variants](#10-transformer-architecture--formulas--variants)
-11. [Deep Learning Cookbook](#11-deep-learning-cookbook)
-12. [LLM-specific Concepts](#12-llm-specific-concepts)
-13. [ML Systems & Production](#13-ml-systems--production)
-14. [Majority Vote / Ensemble — Theory](#14-majority-vote--ensemble--theory)
-
-### PART III — CODING
-
-15. [Matrix Algorithms — Spiral, Rotation, Diagonal](#15-matrix-algorithms--spiral-rotation-diagonal)
-16. [Coding Patterns (DSA)](#16-coding-patterns-dsa)
-17. [PyTorch Essentials](#17-pytorch-essentials)
-18. [Transformer — Code Implementations](#18-transformer--code-implementations)
-19. [Probability Programming Patterns](#19-probability-programming-patterns)
-
-### PART IV — BEHAVIORAL
-
-20. [Interview Strategy & Communication](#20-interview-strategy--communication)
-21. [Appendix — Must-Know Numbers](#21-appendix--must-know-numbers)
+> **万能提示 Universal Tip：** (1) 先问清题意 (2) 说明假设 (3) 写代码前先口述思路 (4) 用小例子验证 (5) 报时间/空间复杂度
 
 ---
 
-# PART I — MATH, PROBABILITY & STATISTICS
+## 目录 Table of Contents
+
+### 第一部分 — 数学、概率与统计 *(非编程 Non-Coding)*
+
+1. [概率核心公式 Probability — Core Identities](#1-概率核心公式-probability--core-identities)
+2. [分布速查表 Distributions Reference Table](#2-分布速查表-distributions-reference-table)
+3. [期望、方差、协方差、相关系数 E / Var / Cov / Corr](#3-期望方差协方差相关系数-e--var--cov--corr)
+4. [正态分布全角度 Gaussian / Normal — All Angles](#4-正态分布全角度-gaussian--normal--all-angles)
+5. [统计推断基础 Statistics — Estimation & CLT](#5-统计推断基础-statistics--estimation--clt)
+6. [假设检验与 A/B 测试 Hypothesis Testing & A/B Testing](#6-假设检验与-ab-测试-hypothesis-testing--ab-testing)
+7. [期望值解题技巧 Expected Value — Problem-Solving Tricks](#7-期望值解题技巧-expected-value--problem-solving-tricks)
+8. [最优停止决策模板 Optimal Stopping — Decision Templates](#8-最优停止决策模板-optimal-stopping--decision-templates)
+9. [必背答案速查 Quick Reference — Must-Know Answers](#9-必背答案速查-quick-reference--must-know-answers)
+
+### 第二部分 — ML 与系统概念 *(非编程 Non-Coding)*
+
+10. [Transformer 架构公式与变体](#10-transformer-架构公式与变体-formulas--variants)
+11. [深度学习速查 Deep Learning Cookbook](#11-深度学习速查-deep-learning-cookbook)
+12. [LLM 专项概念 LLM-specific Concepts](#12-llm-专项概念-llm-specific-concepts)
+13. [ML 系统与生产 ML Systems & Production](#13-ml-系统与生产-ml-systems--production)
+14. [多数投票与集成理论 Majority Vote / Ensemble — Theory](#14-多数投票与集成理论-majority-vote--ensemble--theory)
+
+### 第三部分 — 编程 Coding
+
+15. [矩阵算法 Matrix Algorithms — Spiral, Rotation, Diagonal](#15-矩阵算法-matrix-algorithms--spiral-rotation-diagonal)
+16. [编程模式 DSA Coding Patterns](#16-编程模式-dsa-coding-patterns)
+17. [PyTorch 要点 PyTorch Essentials](#17-pytorch-要点-pytorch-essentials)
+18. [Transformer 代码实现 Code Implementations](#18-transformer-代码实现-code-implementations)
+19. [概率编程模板 Probability Programming Patterns](#19-概率编程模板-probability-programming-patterns)
+
+### 第四部分 — 行为面试 Behavioral
+
+20. [面试策略与沟通 Interview Strategy & Communication](#20-面试策略与沟通-interview-strategy--communication)
+21. [附录：必背数字 Appendix — Must-Know Numbers](#21-附录必背数字-appendix--must-know-numbers)
 
 ---
 
-# 1. Probability — Core Identities
+# 第一部分 — 数学、概率与统计
+
+---
+
+# 1. 概率核心公式 Probability — Core Identities
 
 ```
-Bayes theorem:        P(A|B) = P(B|A)·P(A) / P(B)
-Total probability:    P(B)   = Σᵢ P(B|Aᵢ)·P(Aᵢ)
-Complement:           P(Aᶜ)  = 1 − P(A)
-Inclusion-exclusion:  P(A∪B) = P(A) + P(B) − P(A∩B)
-                      P(A∪B∪C) = ΣP(Aᵢ) − ΣP(Aᵢ∩Aⱼ) + P(A∩B∩C)
-Independence:         P(A∩B) = P(A)·P(B)
-Conditional:          P(A|B) = P(A∩B) / P(B)
+贝叶斯定理 Bayes:        P(A|B) = P(B|A)·P(A) / P(B)
+全概率公式 Total prob:   P(B)   = Σᵢ P(B|Aᵢ)·P(Aᵢ)
+补集 Complement:         P(Aᶜ)  = 1 − P(A)
+容斥原理 Incl-Excl:      P(A∪B) = P(A) + P(B) − P(A∩B)
+                         P(A∪B∪C) = ΣP(Aᵢ) − ΣP(Aᵢ∩Aⱼ) + P(A∩B∩C)
+独立性 Independence:     P(A∩B) = P(A)·P(B)
+条件概率 Conditional:    P(A|B) = P(A∩B) / P(B)
 ```
 
-**Conditional independence vs marginal independence:**
-- X ⊥ Y | Z  does NOT imply  X ⊥ Y  (and vice versa)
-- Counter-example: coin flip C determines whether X₁,X₂ are correlated
+**条件独立 ≠ 边际独立 Conditional independence vs marginal independence：**
+- X ⊥ Y | Z **不能推出** X ⊥ Y（反之亦然）
+- 反例：硬币 C 决定 X₁, X₂ 是否相关
 
-**Odds form of Bayes (log-likelihood ratio):**
+**贝叶斯比数形式 Odds form of Bayes（对数似然比）：**
 ```
-Posterior odds = Prior odds × Likelihood ratio
+后验比 Posterior odds = 先验比 Prior odds × 似然比 Likelihood ratio
 P(H|E)/P(Hᶜ|E) = P(H)/P(Hᶜ) × P(E|H)/P(E|Hᶜ)
 ```
 
 ---
 
-# 2. Distributions Reference Table
+# 2. 分布速查表 Distributions Reference Table
 
-| Distribution | PMF / PDF | E[X] | Var(X) | Key property |
+| 分布 Distribution | PMF / PDF | 期望 E[X] | 方差 Var(X) | 关键性质 Key Property |
 |---|---|---|---|---|
-| **Bernoulli(p)** | P(X=1)=p | p | p(1−p) | Single trial |
-| **Binomial(n,p)** | C(n,k)pᵏ(1−p)ⁿ⁻ᵏ | np | np(1−p) | n Bernoulli trials |
-| **Geometric(p)** | (1−p)ᵏ⁻¹p | 1/p | (1−p)/p² | Memoryless (discrete) |
-| **Negative Binomial(r,p)** | — | r/p | r(1−p)/p² | r-th success wait |
-| **Hypergeometric(N,K,n)** | C(K,k)C(N−K,n−k)/C(N,n) | nK/N | n·K/N·(N−K)/N·(N−n)/(N−1) | No replacement |
-| **Poisson(λ)** | e⁻λλᵏ/k! | λ | λ | E=Var=λ |
-| **Uniform{1..n}** | 1/n | (n+1)/2 | (n²−1)/12 | — |
-| **Uniform[a,b]** | 1/(b−a) | (a+b)/2 | (b−a)²/12 | — |
-| **Exponential(λ)** | λe⁻λˣ | 1/λ | 1/λ² | Memoryless (continuous) |
-| **Normal(μ,σ²)** | see §4 | μ | σ² | CLT limit |
-| **Beta(α,β)** | xᵅ⁻¹(1−x)^{β−1}/B(α,β) | α/(α+β) | αβ/((α+β)²(α+β+1)) | Conjugate to Bernoulli |
-| **Gamma(α,β)** | xᵅ⁻¹e⁻ˣ/ᵝ/Γ(α)βᵅ | αβ | αβ² | Sum of exponentials |
-| **Chi-squared(k)** | Gamma(k/2, 2) | k | 2k | Sum of k squared normals |
+| **Bernoulli(p)** | P(X=1)=p | p | p(1−p) | 单次试验 Single trial |
+| **Binomial(n,p)** | C(n,k)pᵏ(1−p)ⁿ⁻ᵏ | np | np(1−p) | n 次伯努利 |
+| **Geometric(p)** | (1−p)ᵏ⁻¹p | 1/p | (1−p)/p² | 无记忆性（离散）|
+| **Negative Binomial(r,p)** | — | r/p | r(1−p)/p² | 等第 r 次成功 |
+| **Hypergeometric(N,K,n)** | C(K,k)C(N−K,n−k)/C(N,n) | nK/N | — | 不放回抽样 |
+| **Poisson(λ)** | e⁻λλᵏ/k! | λ | λ | 期望=方差=λ |
+| **Uniform{1..n}** | 1/n | (n+1)/2 | (n²−1)/12 | 离散均匀 |
+| **Uniform[a,b]** | 1/(b−a) | (a+b)/2 | (b−a)²/12 | 连续均匀 |
+| **Exponential(λ)** | λe⁻λˣ | 1/λ | 1/λ² | 无记忆性（连续）|
+| **Normal(μ,σ²)** | 见 §4 | μ | σ² | CLT 的极限 |
+| **Beta(α,β)** | xᵅ⁻¹(1−x)^{β−1}/B(α,β) | α/(α+β) | αβ/((α+β)²(α+β+1)) | Bernoulli 共轭先验 |
+| **Gamma(α,β)** | xᵅ⁻¹e⁻ˣ/ᵝ/Γ(α)βᵅ | αβ | αβ² | 指数分布之和 |
+| **Chi-squared(k)** | Gamma(k/2, 2) | k | 2k | k 个标准正态的平方和 |
 
-**Poisson ≈ Binomial** when n large, p small, np = λ moderate.
-
-**Normal ≈ Binomial** when n large (CLT), μ=np, σ²=np(1-p).
+**近似关系 Approximations：**
+- **Poisson ≈ Binomial**：n 大、p 小、np = λ 适中时
+- **Normal ≈ Binomial**：n 大（CLT），μ=np，σ²=np(1-p)
 
 ---
 
-# 3. Expected Value, Variance, Covariance, Correlation — Complete Properties
+# 3. 期望、方差、协方差、相关系数 E / Var / Cov / Corr
 
-## 3.1 Expected Value E[X]
+## 3.1 期望 Expected Value E[X]
 
 ```
-Discrete:    E[X] = Σₓ x · P(X = x)
-Continuous:  E[X] = ∫₋∞^∞ x · f(x) dx
+离散 Discrete:    E[X] = Σₓ x · P(X = x)
+连续 Continuous:  E[X] = ∫₋∞^∞ x · f(x) dx
 
-LOTUS (Law of the Unconscious Statistician):
-  E[g(X)] = Σₓ g(x) P(X=x)       (discrete)
-  E[g(X)] = ∫ g(x) f(x) dx       (continuous)
+LOTUS（无意识统计学家定律）:
+  E[g(X)] = Σₓ g(x)·P(X=x)      （离散）
+  E[g(X)] = ∫ g(x)·f(x) dx      （连续）
 ```
 
-**Properties of E:**
+**期望的性质 Properties of E：**
 
-| Rule | Formula | Note |
+| 性质 Rule | 公式 Formula | 备注 Note |
 |---|---|---|
-| Linearity | E[aX + bY + c] = aE[X] + bE[Y] + c | **Always** — no independence needed |
-| Constant | E[c] = c | — |
-| Product (indep) | E[XY] = E[X]·E[Y] | **Only if X ⊥ Y** |
-| Tower property | E[X] = E[E[X\|Y]] | Useful for multi-stage problems |
-| E[X²] | E[X²] = Var(X) + (E[X])² | Rearrangement of Var formula |
+| 线性 Linearity | E[aX + bY + c] = aE[X] + bE[Y] + c | **永远成立，不需要独立 Always — no independence needed** |
+| 常数 Constant | E[c] = c | — |
+| 乘积（独立时）Product (indep) | E[XY] = E[X]·E[Y] | **仅当 X ⊥ Y 时成立 Only if independent** |
+| 塔性质 Tower property | E[X] = E[E[X\|Y]] | 多阶段问题利器 |
+| E[X²] 关系 | E[X²] = Var(X) + (E[X])² | 由方差公式变形 |
 
-## 3.2 Variance Var(X)
+## 3.2 方差 Variance Var(X)
 
 ```
-Definition:     Var(X) = E[(X − μ)²]           μ = E[X]
-Shortcut:       Var(X) = E[X²] − (E[X])²        ← always use this for calculations
-Std deviation:  SD(X) = σ = √Var(X)
+定义 Definition:   Var(X) = E[(X − μ)²]           μ = E[X]
+计算捷径 Shortcut: Var(X) = E[X²] − (E[X])²        ← 手算时永远用这个
+标准差 Std dev:    SD(X) = σ = √Var(X)
 ```
 
-**Properties of Var:**
+**方差的性质 Properties of Var：**
 
-| Rule | Formula | Note |
+| 性质 Rule | 公式 Formula | 备注 Note |
 |---|---|---|
-| Scale | Var(aX) = a²·Var(X) | squaring the constant |
-| Shift | Var(X + c) = Var(X) | constant doesn't affect spread |
-| Linear combo | Var(aX + bY) = a²Var(X) + b²Var(Y) + 2ab·Cov(X,Y) | general |
-| If X ⊥ Y | Var(X + Y) = Var(X) + Var(Y) | Cov = 0 |
-| Sample variance | s² = Σ(xᵢ − x̄)²/(n−1) | unbiased; divide by n−1 |
-| Eve's law (LTP) | Var(X) = E[Var(X\|Y)] + Var(E[X\|Y]) | "total variance" |
+| 缩放 Scale | Var(aX) = a²·Var(X) | 常数要平方 |
+| 平移 Shift | Var(X + c) = Var(X) | 常数不改变离散程度 |
+| 线性组合 | Var(aX + bY) = a²Var(X) + b²Var(Y) + 2ab·Cov(X,Y) | 通用公式 |
+| 独立时 If X ⊥ Y | Var(X + Y) = Var(X) + Var(Y) | Cov = 0 |
+| 样本方差 Sample var | s² = Σ(xᵢ − x̄)²/(n−1) | 无偏；分母用 n−1 |
+| Eve 定律（全方差）| Var(X) = E[Var(X\|Y)] + Var(E[X\|Y]) | 组内方差期望 + 组间均值方差 |
 
-## 3.3 Covariance Cov(X, Y)
+## 3.3 协方差 Covariance Cov(X, Y)
 
 ```
-Definition:  Cov(X,Y) = E[(X−μX)(Y−μY)]
-Shortcut:    Cov(X,Y) = E[XY] − E[X]·E[Y]      ← use this
+定义 Definition: Cov(X,Y) = E[(X−μX)(Y−μY)]
+计算捷径 Shortcut: Cov(X,Y) = E[XY] − E[X]·E[Y]   ← 用这个
 ```
 
-**Properties of Cov:**
+**协方差的性质 Properties of Cov：**
 
-| Rule | Formula |
+| 性质 Rule | 公式 Formula |
 |---|---|
-| Symmetric | Cov(X,Y) = Cov(Y,X) |
-| Self | Cov(X,X) = Var(X) |
-| Bilinear | Cov(aX+b, cY+d) = ac·Cov(X,Y) |
-| Distributive | Cov(X+Y, Z) = Cov(X,Z) + Cov(Y,Z) |
-| Independent | If X ⊥ Y → Cov(X,Y) = 0 (converse false!) |
-| Var of sum | Var(X+Y) = Var(X) + Var(Y) + 2Cov(X,Y) |
-| Var of sum n | Var(ΣXᵢ) = Σ Var(Xᵢ) + 2Σᵢ<ⱼ Cov(Xᵢ,Xⱼ) |
+| 对称 Symmetric | Cov(X,Y) = Cov(Y,X) |
+| 自协方差 Self | Cov(X,X) = Var(X) |
+| 双线性 Bilinear | Cov(aX+b, cY+d) = ac·Cov(X,Y) |
+| 分配律 Distributive | Cov(X+Y, Z) = Cov(X,Z) + Cov(Y,Z) |
+| 独立 → Cov=0 | X ⊥ Y → Cov(X,Y) = 0 **（反之不成立！）** |
+| 方差展开 | Var(X+Y) = Var(X) + Var(Y) + 2Cov(X,Y) |
+| n 个变量之和方差 | Var(ΣXᵢ) = ΣVar(Xᵢ) + 2Σᵢ<ⱼ Cov(Xᵢ,Xⱼ) |
 
-**Important**: Cov(X,Y) = 0 does NOT imply independence. Counter-example: X ~ U(-1,1), Y = X².
+**重要陷阱：** Cov(X,Y) = 0 **不代表独立**。反例：X ~ U(-1,1)，Y = X²，Cov=0 但完全非线性相关。
 
-## 3.4 Correlation Coefficient ρ (Pearson)
+## 3.4 相关系数 Correlation Coefficient ρ (Pearson)
 
 ```
-ρ(X,Y) = Cov(X,Y) / (SD(X)·SD(Y))     range: [−1, 1]
+ρ(X,Y) = Cov(X,Y) / (SD(X)·SD(Y))     取值范围 Range: [−1, 1]
 ```
 
-**Interpretation:**
+**解读 Interpretation：**
 
-| ρ | Meaning |
+| ρ 值 | 含义 Meaning |
 |---|---|
-| ρ = +1 | Perfect positive linear relationship: Y = aX + b, a > 0 |
-| ρ = −1 | Perfect negative linear relationship: Y = aX + b, a < 0 |
-| ρ = 0 | Uncorrelated — but NOT necessarily independent |
-| 0 < ρ < 1 | Positive linear association |
-| −1 < ρ < 0 | Negative linear association |
+| ρ = +1 | 完全正线性关系：Y = aX + b，a > 0 |
+| ρ = −1 | 完全负线性关系：Y = aX + b，a < 0 |
+| ρ = 0 | 不相关 Uncorrelated —— **但不一定独立！** |
+| 0 < ρ < 1 | 正线性相关 Positive linear association |
+| −1 < ρ < 0 | 负线性相关 Negative linear association |
 
-**Pearson vs Spearman:**
+**Pearson vs Spearman：**
 
 | | Pearson | Spearman |
 |---|---|---|
-| Measures | Linear relationship | Monotone relationship |
-| Data | Raw values | Ranks of values |
-| Robust to outliers | No | Yes |
-| Use when | Normal, linear | Skewed, ordinal, non-linear monotone |
+| 衡量 Measures | 线性关系 Linear | 单调关系 Monotone |
+| 数据 Data | 原始值 Raw values | 秩 Ranks |
+| 对异常值鲁棒 Outlier robust | 否 No | 是 Yes |
+| 适用场景 | 正态、线性 Normal, linear | 偏态、序数、非线性单调 |
 
-**Sample correlation (estimate from data):**
+**样本相关系数 Sample correlation：**
 ```
 r = Σ(xᵢ−x̄)(yᵢ−ȳ) / √[Σ(xᵢ−x̄)² · Σ(yᵢ−ȳ)²]
 ```
 
-## 3.5 Moment Generating Function (MGF)
+## 3.5 矩母函数 Moment Generating Function (MGF)
 
 ```
 M_X(t) = E[e^{tX}]
-E[Xⁿ] = M_X^{(n)}(0)      (n-th derivative at 0)
+E[Xⁿ] = M_X^{(n)}(0)      （对 t 求 n 阶导，令 t=0）
 ```
 
-| Distribution | MGF |
+| 分布 | MGF |
 |---|---|
 | Bernoulli(p) | 1 − p + pe^t |
 | Binomial(n,p) | (1 − p + pe^t)ⁿ |
 | Poisson(λ) | exp(λ(eᵗ − 1)) |
 | Normal(μ,σ²) | exp(μt + σ²t²/2) |
-| Exponential(λ) | λ/(λ−t), t < λ |
+| Exponential(λ) | λ/(λ−t)，t < λ |
 
 ---
 
-# 4. Gaussian / Normal Distribution — All Angles
+# 4. 正态分布全角度 Gaussian / Normal — All Angles
 
-## 4.1 Core Formulas
+## 4.1 核心公式 Core Formulas
 
 ```
-PDF:   f(x; μ, σ²) = (1 / √(2πσ²)) · exp(−(x−μ)² / (2σ²))
+PDF（概率密度函数）:
+  f(x; μ, σ²) = (1 / √(2πσ²)) · exp(−(x−μ)² / (2σ²))
 
-Standard (μ=0, σ=1):
-       φ(x) = (1/√(2π)) · exp(−x²/2)
-       Φ(x) = P(Z ≤ x) = ∫₋∞ˣ φ(t) dt      (no closed form)
+标准正态 Standard N(0,1):
+  φ(x) = (1/√(2π)) · exp(−x²/2)
+  Φ(x) = P(Z ≤ x) = ∫₋∞ˣ φ(t) dt      （无闭合形式 no closed form）
 
-Standardize:  Z = (X − μ) / σ  ~  N(0, 1)
+标准化 Standardize:  Z = (X − μ) / σ  ~  N(0, 1)
 ```
 
-## 4.2 Key Quantiles (Memorize)
+## 4.2 关键分位数（必背）Key Quantiles — Memorize
 
-| Scenario | z-value | Meaning |
+| 使用场景 Scenario | z 值 | 含义 Meaning |
 |---|---|---|
-| 90% CI → z₀.₀₅ | **1.645** | P(Z > 1.645) = 5% |
-| 95% CI → z₀.₀₂₅ | **1.960** | P(Z > 1.96) = 2.5% |
-| 99% CI → z₀.₀₀₅ | **2.576** | P(Z > 2.576) = 0.5% |
-| 1σ rule | ±1.0 | P(-1 ≤ Z ≤ 1) ≈ **68.3%** |
-| 2σ rule | ±2.0 | P(-2 ≤ Z ≤ 2) ≈ **95.4%** |
-| 3σ rule | ±3.0 | P(-3 ≤ Z ≤ 3) ≈ **99.7%** |
+| 90% 置信区间 → z₀.₀₅ | **1.645** | P(Z > 1.645) = 5% |
+| 95% 置信区间 → z₀.₀₂₅ | **1.960** | P(Z > 1.96) = 2.5% |
+| 99% 置信区间 → z₀.₀₀₅ | **2.576** | P(Z > 2.576) = 0.5% |
+| 1σ 规则 | ±1.0 | P(-1 ≤ Z ≤ 1) ≈ **68.3%** |
+| 2σ 规则 | ±2.0 | P(-2 ≤ Z ≤ 2) ≈ **95.4%** |
+| 3σ 规则 | ±3.0 | P(-3 ≤ Z ≤ 3) ≈ **99.7%** |
 
-## 4.3 Properties
+## 4.3 性质 Properties
 
 ```
-Linear transform:     X ~ N(μ,σ²)  →  aX+b ~ N(aμ+b, a²σ²)
-Sum of independents:  X+Y ~ N(μ₁+μ₂, σ₁²+σ₂²)
-Scaling:              X ~ N(0,1)  →  μ + σX ~ N(μ, σ²)
-Symmetry:             φ(−x) = φ(x),  Φ(−x) = 1 − Φ(x)
-MGF:                  M_X(t) = exp(μt + σ²t²/2)
+线性变换 Linear transform:  X ~ N(μ,σ²)  →  aX+b ~ N(aμ+b, a²σ²)
+独立之和 Sum of indep:       X+Y ~ N(μ₁+μ₂, σ₁²+σ₂²)
+缩放 Scaling:                X ~ N(0,1)  →  μ + σX ~ N(μ, σ²)
+对称性 Symmetry:             φ(−x) = φ(x)，Φ(−x) = 1 − Φ(x)
+矩母函数 MGF:                M_X(t) = exp(μt + σ²t²/2)
 ```
 
-## 4.4 Normal Distribution From Multiple Angles
+## 4.4 正态分布的多角度解读 Multiple Angles
 
-| Angle | Statement |
+| 角度 Angle | 核心论述 Statement |
 |---|---|
-| **Probability / CLT** | Sum of n i.i.d. r.v.s → N(nμ, nσ²); rescaled → N(0,1) |
-| **Information theory** | Max-entropy distribution with fixed mean & variance (among all distributions on ℝ) |
-| **Bayesian** | Conjugate prior for the mean (with known variance); N·N → N |
-| **Geometry (high-d)** | In ℝᵈ, N(0,I): almost all mass on thin shell at radius √d; components almost orthogonal |
-| **Physics / Diffusion** | Solution to heat equation: Brownian motion density at time t is N(0, t) |
-| **Log-space** | Log-normal: if log X ~ N(μ,σ²), then X = eˣ is right-skewed |
-| **Sampling** | Box-Muller: Z₁=√(−2ln U₁)·cos(2πU₂), Z₂=√(−2ln U₁)·sin(2πU₂) are i.i.d. N(0,1) |
+| **概率论 / CLT** | n 个 i.i.d. 随机变量之和 → N(nμ, nσ²)；标准化后 → N(0,1) |
+| **信息论 Information theory** | 在固定均值和方差的所有分布中，正态分布具有**最大熵 maximum entropy** |
+| **贝叶斯 Bayesian** | 均值的**共轭先验 conjugate prior**（方差已知时）；N × N → N |
+| **高维几何 Geometry (high-d)** | ℝᵈ 中 N(0,I)：几乎所有质量集中在半径 √d 的薄壳上；分量近似正交 |
+| **物理 / 扩散 Physics / Diffusion** | 热方程的解：布朗运动在时刻 t 的密度为 N(0, t) |
+| **对数空间 Log-space** | Log-normal：若 log X ~ N(μ,σ²)，则 X = eˣ 是右偏分布 |
+| **抽样 Sampling** | Box-Muller 变换：Z₁=√(−2ln U₁)·cos(2πU₂)，Z₂=√(−2ln U₁)·sin(2πU₂) 均为 N(0,1) |
 
-## 4.5 Gaussian Function Properties (FWHM)
+## 4.5 FWHM（半高全宽）
 
 ```
 y = exp(−(x−μ)²/(2σ²))
-Maximum at x = μ:  y_max = 1
+最大值在 x = μ 处：y_max = 1
 
-Half-maximum at:   x = μ ± σ√(2 ln 2)
+半最大值对应位置：x = μ ± σ√(2 ln 2)
 FWHM = 2σ√(2 ln 2) ≈ 2.355σ
 ```
 
-| Function | FWHM |
+| 函数 Function | FWHM |
 |---|---|
-| Gaussian  exp(−x²/2σ²) | 2√(2ln2)·σ ≈ 2.355σ |
-| Cauchy/Lorentz  1/(1+(x/γ)²) | 2γ |
-| Laplace  exp(−\|x\|/b) | 2b·ln2 ≈ 1.386b |
+| 高斯 Gaussian exp(−x²/2σ²) | 2√(2ln2)·σ ≈ **2.355σ** |
+| 柯西 Cauchy/Lorentz 1/(1+(x/γ)²) | **2γ** |
+| 拉普拉斯 Laplace exp(−\|x\|/b) | 2b·ln2 ≈ **1.386b** |
+
+## 4.6 二元正态与角度：arcsin 公式 Bivariate Normal & Angles
+
+设 X, Y 为**标准二元正态**，相关系数 ρ，几何夹角 θ = arccos(ρ)：
+
+```
+核心公式 Core formula:
+  P(X > 0, Y > 0) = 1/4 + arcsin(ρ) / (2π)
+
+等价角度形式 Angle form（θ = arccos(ρ)）:
+  P(X > 0, Y > 0) = (π − θ) / (2π)
+  P(同号 same sign)  = (π − θ) / π  =  1 − θ/π
+  P(异号 diff sign)  =      θ / π   =  arccos(ρ) / π
+```
+
+**三个边界验证（必查 sanity check）：**
+
+| ρ（θ）| P(同号) | 直觉 |
+|---|---|---|
+| ρ=1（θ=0）| 1 | 完全正相关，永远同号 |
+| ρ=0（θ=π/2）| 1/2 | 独立，同号概率 50% |
+| ρ=-1（θ=π）| 0 | 完全负相关，永远异号 |
+
+**几何直觉：** 将 (X, Y) 写成 2D 各向同性高斯点在夹角为 θ 的两个方向上的投影，随机点落在"两轴同侧扇形"的概率 = 扇形弧长 (π−θ) / 总周长 2π。
+
+**应用：随机超平面哈希 LSH (SimHash)**
+
+```
+哈希函数：h(x) = sign(w · x)，  w ~ N(0, I)
+
+P(h(x) ≠ h(y)) = θ / π = arccos(cos θ) / π
+
+其中 θ = 向量 x 和 y 的夹角
+→ 角度越小（越相似），哈希碰撞概率越大 ✓
+```
+
+这是 **局部敏感哈希（Locality-Sensitive Hashing）** 中 SimHash / 随机投影的理论基础。
 
 ---
 
-# 5. Statistics Fundamentals — Estimation & CLT
+# 5. 统计推断基础 Statistics — Estimation & CLT
 
-## 5.1 Sample Statistics
-
-```
-Sample mean:      x̄  = (1/n) Σ xᵢ                  (unbiased: E[x̄] = μ)
-Sample variance:  s²  = Σ(xᵢ − x̄)² / (n−1)          (unbiased; divide by n−1 not n)
-Standard error:   SE  = σ/√n  ≈ s/√n                 (uncertainty of x̄)
-```
-
-**Why n-1?** Bessel's correction. One degree of freedom is "used" to estimate μ, leaving n-1 free.
-
-## 5.2 Central Limit Theorem (CLT)
+## 5.1 样本统计量 Sample Statistics
 
 ```
-X₁, X₂, ..., Xₙ i.i.d.  with mean μ, variance σ²
-
-CLT:   √n · (X̄ − μ) / σ  →  N(0, 1)   as  n → ∞
-i.e.:  X̄  ~  N(μ,  σ²/n)             for large n (typically n ≥ 30)
+样本均值 Sample mean:      x̄  = (1/n) Σ xᵢ                  （无偏：E[x̄] = μ）
+样本方差 Sample variance:  s²  = Σ(xᵢ − x̄)² / (n−1)          （无偏；除以 n−1）
+标准误差 Standard error:   SE  = σ/√n  ≈ s/√n                 （x̄ 的不确定性）
 ```
 
-**CLT vs Law of Large Numbers (LLN):**
+**为什么除以 n-1？（Bessel 修正）** 用了 1 个自由度估计 μ，只剩 n-1 个自由度，除以 n 会低估方差。
 
-| | LLN | CLT |
+## 5.2 中心极限定理 Central Limit Theorem (CLT)
+
+```
+X₁, X₂, ..., Xₙ i.i.d.，均值 μ，方差 σ²
+
+CLT:  √n · (X̄ − μ) / σ  →  N(0, 1)   当 n → ∞
+即:   X̄  ~  N(μ,  σ²/n)               大样本时（通常 n ≥ 30）
+```
+
+**CLT vs 大数定律 Law of Large Numbers (LLN)：**
+
+| | LLN 大数定律 | CLT 中心极限定理 |
 |---|---|---|
-| What it says | X̄ **converges to** μ | **Distribution of (X̄−μ)** converges to N(0,σ²/n) |
-| Type | Convergence of value | Convergence of distribution shape |
-| Analogy | "The average will be right" | "The average's error is bell-curved" |
+| 结论 Says | X̄ **收敛到** μ（值收敛）| (X̄−μ) 的**分布**收敛到正态 |
+| 类型 Type | 值的收敛 | 分布形状的收敛 |
+| 比喻 | "平均值会趋向真值" | "平均值的误差是钟形曲线" |
 
-## 5.3 Maximum Likelihood Estimation (MLE)
+## 5.3 最大似然估计 Maximum Likelihood Estimation (MLE)
 
 ```
-Likelihood:       L(θ) = P(data | θ) = Πᵢ f(xᵢ; θ)
-Log-likelihood:   ℓ(θ) = log L(θ) = Σᵢ log f(xᵢ; θ)
-MLE:              θ̂ = argmax ℓ(θ)  →  set dℓ/dθ = 0
+似然函数 Likelihood:     L(θ) = P(data | θ) = Πᵢ f(xᵢ; θ)
+对数似然 Log-likelihood: ℓ(θ) = log L(θ) = Σᵢ log f(xᵢ; θ)
+MLE:                     θ̂ = argmax ℓ(θ)  →  令 dℓ/dθ = 0
 ```
 
-**Common MLEs:**
+**常见 MLE 结果 Common MLEs：**
 
-| Model | MLE |
+| 模型 Model | MLE 结果 |
 |---|---|
-| Bernoulli(p) | p̂ = k/n (sample proportion) |
-| Normal(μ,σ²) | μ̂ = x̄,  σ̂² = Σ(xᵢ−x̄)²/n (biased!) |
+| Bernoulli(p) | p̂ = k/n（样本频率）|
+| Normal(μ,σ²) | μ̂ = x̄，σ̂² = Σ(xᵢ−x̄)²/n（**有偏！biased**）|
 | Exponential(λ) | λ̂ = 1/x̄ |
 | Poisson(λ) | λ̂ = x̄ |
 
-**MLE vs MAP:**
+**MLE vs MAP（最大后验估计）：**
 
 | | MLE | MAP |
 |---|---|---|
-| Objective | max P(data\|θ) | max P(θ\|data) = P(data\|θ)·P(θ) |
-| Prior | ignored | included |
-| Small-n stability | unstable (can overfit) | stable (regularized by prior) |
-| Bernoulli example (7H/10) | p̂=0.7 | p̂=(7+α)/(10+α+β) with Beta(α,β) prior |
+| 目标函数 Objective | max P(data\|θ) | max P(θ\|data) = P(data\|θ)·P(θ) |
+| 先验 Prior | 忽略 ignored | 纳入 included |
+| 小样本稳定性 Small-n | 不稳定，易过拟合 | 稳定（先验起正则化作用）|
+| 伯努利例子（7正/10次）| p̂=0.7 | p̂=(7+α)/(10+α+β)，Beta(α,β) 先验 |
 
-## 5.4 Confidence Intervals
-
-```
-95% CI for mean (σ known):      x̄  ±  1.96 · σ/√n
-95% CI for mean (σ unknown):    x̄  ±  t_{0.025, n-1} · s/√n
-95% CI for proportion:          p̂  ±  1.96 · √(p̂(1−p̂)/n)
-```
-
-**Correct interpretation:** "If we repeated this procedure many times, ~95% of resulting intervals would contain the true parameter." The true parameter is fixed; the interval is random.
-
-**Common wrong interpretations:**
-- ❌ "There's a 95% chance μ is in (a, b)" — μ is fixed; probability doesn't apply
-- ❌ "95% of data points are in the CI" — CI is about the mean, not data spread
-
-**Width determinants:**
-- Wider CI ← smaller n, higher σ, higher confidence level, p closer to 0.5
-
-## 5.5 Bias, Variance, and MSE
+## 5.4 置信区间 Confidence Intervals
 
 ```
-Bias(θ̂)   = E[θ̂] − θ
-MSE(θ̂)    = Var(θ̂) + Bias(θ̂)²
-Unbiased:   E[θ̂] = θ   (Bias = 0)
+均值（σ 已知）95% CI:     x̄  ±  1.96 · σ/√n
+均值（σ 未知）95% CI:     x̄  ±  t_{0.025, n-1} · s/√n
+比例 95% CI:              p̂  ±  1.96 · √(p̂(1−p̂)/n)
 ```
 
-Bias-variance tradeoff in ML: regularization increases bias but reduces variance; may lower MSE overall.
+**正确解读（非常重要！）：** "如果用同样的方法反复抽样并建立区间，约 95% 的区间会包含真实参数。" 真实参数是固定的，区间是随机的。
+
+**常见错误解读：**
+- ❌ "有 95% 的概率 μ 在 (a, b) 内" —— μ 是固定值，不是随机变量
+- ❌ "95% 的数据点在置信区间内" —— CI 是关于均值的，不是数据分布
+
+**影响区间宽度的因素：**
+- 更宽的 CI ← 更小的 n、更大的 σ、更高的置信水平、p 更接近 0.5
+
+## 5.5 偏差、方差与 MSE Bias, Variance & MSE
+
+```
+偏差 Bias(θ̂)   = E[θ̂] − θ
+MSE(θ̂)         = Var(θ̂) + Bias(θ̂)²
+无偏 Unbiased:  E[θ̂] = θ   （Bias = 0）
+```
+
+ML 中的偏差-方差权衡：正则化增大偏差但降低方差，总体 MSE 可能降低。
 
 ---
 
-# 6. Hypothesis Testing & A/B Testing
+# 6. 假设检验与 A/B 测试 Hypothesis Testing & A/B Testing
 
-## 6.1 Framework
+## 6.1 检验框架 Framework
 
 ```
-H₀: null hypothesis (default, what we're trying to disprove)
-H₁: alternative hypothesis (what we're trying to establish)
+H₀：原假设 null hypothesis（默认，我们试图推翻它）
+H₁：备择假设 alternative hypothesis（我们试图证明的）
 
-α   = P(Type I error)  = P(reject H₀ | H₀ true)    ← significance level (set by us, usually 0.05)
-β   = P(Type II error) = P(fail to reject H₀ | H₁ true)
-Power = 1 − β                                         ← sensitivity of the test
+α   = P(第一类错误 Type I error)  = P(拒绝 H₀ | H₀ 为真)    ← 显著性水平，通常设 0.05
+β   = P(第二类错误 Type II error) = P(不拒绝 H₀ | H₁ 为真)
+Power（检验效能）= 1 − β                                      ← 检验的灵敏度
 ```
 
-**Decision matrix:**
+**决策矩阵 Decision Matrix：**
 
-|  | H₀ true | H₀ false |
+| | H₀ 为真 H₀ true | H₀ 为假 H₀ false |
 |---|---|---|
-| **Reject H₀** | Type I Error (α) | Correct (Power = 1−β) |
-| **Fail to reject H₀** | Correct (1−α) | Type II Error (β) |
+| **拒绝 H₀ Reject** | 第一类错误 Type I Error (α)，假阳性 | 正确 Correct (Power = 1−β) |
+| **不拒绝 Fail to reject** | 正确 Correct (1−α) | 第二类错误 Type II Error (β)，假阴性 |
 
-## 6.2 p-value
+## 6.2 p 值 p-value
 
 ```
-p-value = P(data as extreme or more extreme | H₀ true)
+p-value = P（在 H₀ 为真的前提下，出现当前或更极端结果的概率）
 
-Reject H₀ iff  p < α
+当 p < α 时拒绝 H₀
 ```
 
-**p-value is NOT:**
-- Probability H₀ is true
-- Probability your discovery is false
-- A measure of effect size or practical significance
+**p 值不是（常见误解）：**
+- ❌ H₀ 为真的概率
+- ❌ 你的发现是假的概率
+- ❌ 效应大小或实际显著性的衡量
 
-## 6.3 Common Test Statistics
+## 6.3 常用检验统计量 Common Test Statistics
 
-| Test | Statistic | Distribution under H₀ | Use when |
+| 检验 Test | 统计量 Statistic | H₀ 下分布 | 使用场景 |
 |---|---|---|---|
-| 1-sample z | z = (x̄−μ₀)/(σ/√n) | N(0,1) | σ known |
-| 1-sample t | t = (x̄−μ₀)/(s/√n) | t_{n-1} | σ unknown |
-| 2-sample z (proportions) | z = (p̂₁−p̂₂)/SE | N(0,1) | large n |
-| 2-sample t | t = (x̄₁−x̄₂)/SE | t_{n₁+n₂-2} | small n, σ unknown |
-| Chi-squared | χ² = Σ(O−E)²/E | χ²_{k-1} | categorical; goodness of fit |
-| ANOVA (F-test) | F = MSB/MSW | F_{k-1, N-k} | compare ≥3 group means |
+| 单样本 z 检验 | z = (x̄−μ₀)/(σ/√n) | N(0,1) | σ 已知 |
+| 单样本 t 检验 | t = (x̄−μ₀)/(s/√n) | t_{n-1} | σ 未知 |
+| 双比例 z 检验 | z = (p̂₁−p̂₂)/SE | N(0,1) | n 较大 |
+| 双样本 t 检验 | t = (x̄₁−x̄₂)/SE | t_{n₁+n₂-2} | n 小，σ 未知 |
+| 卡方检验 Chi-squared | χ² = Σ(O−E)²/E | χ²_{k-1} | 类别数据，拟合优度 |
+| 方差分析 ANOVA (F-test) | F = MSB/MSW | F_{k-1, N-k} | 比较 ≥3 组均值 |
 
-## 6.4 A/B Testing — Design Checklist
+## 6.4 A/B 测试设计清单 Design Checklist
 
-**Step 1: Define hypothesis**
+**第一步：定义假设 Define hypothesis**
 ```
-H₀: p₁ = p₂  (no difference in conversion rates)
-H₁: p₁ ≠ p₂  (two-tailed; use one-tailed only if direction certain)
+H₀: p₁ = p₂  （转化率无差异）
+H₁: p₁ ≠ p₂  （双尾；只有方向明确时才用单尾）
 ```
 
-**Step 2: Sample size calculation**
+**第二步：样本量计算 Sample size calculation**
 ```
-For two proportions (most common in practice):
+双比例检验（最常用）:
 
 n = (z_{α/2} + z_β)² · [p₁(1−p₁) + p₂(1−p₂)] / (p₁ − p₂)²
 
-Standard params:  α=0.05  →  z_{α/2}=1.96
-                  Power=80% →  z_β=0.84    → (1.96+0.84)²≈7.84
-                  Power=90% →  z_β=1.28    → (1.96+1.28)²≈10.5
+常用参数:  α=0.05  →  z_{α/2}=1.96
+           Power=80% →  z_β=0.84   → (1.96+0.84)²≈7.84
+           Power=90% →  z_β=1.28   → (1.96+1.28)²≈10.5
 ```
 
-**Example:** p₁=10%, p₂=12%, α=0.05, power=80%
+**示例 Example：** p₁=10%，p₂=12%，α=0.05，power=80%
 ```
 n = 7.84 × (0.1×0.9 + 0.12×0.88) / (0.02)² = 7.84 × 0.1956 / 0.0004 ≈ 3,832 per group
 ```
 
-**Step 3: Run the experiment**
+**第三步：实验要求 Run the experiment**
 
-| Requirement | Why |
+| 要求 Requirement | 原因 Why |
 |---|---|
-| Pre-register n and α | Prevent optional stopping (p-hacking) |
-| Randomize assignment | Eliminate confounds |
-| One variable at a time | Attribution clarity |
-| Run full duration | Weekly seasonality effects |
-| Check sample ratio mismatch (SRM) | Detect experiment bugs |
+| 预先注册 n 和 α | 防止偷窥（p-hacking / optional stopping）|
+| 随机分配 Randomize | 消除混淆变量 |
+| 一次只改一个变量 | 因果归因需要单一变量 |
+| 跑完设计时长 Full duration | 消除周期性效应（如工作日/周末）|
+| 检查样本比例失配 SRM | 发现实验 bug |
 
-**Step 4: Pitfalls to watch**
+**第四步：常见陷阱 Pitfalls**
 
-| Pitfall | Problem | Fix |
+| 陷阱 Pitfall | 问题 Problem | 修复 Fix |
 |---|---|---|
-| Early stopping (peeking) | Inflates Type I error | Sequential testing (mSPRT) or pre-commit to n |
-| Multiple metrics | FWER inflates | Pre-specify primary metric; FDR for secondary |
-| Network effects (spillover) | Control/treatment bleed | Cluster randomization |
-| Simpson's Paradox | Confound reverses direction | Stratify by segment; check each subgroup |
-| Novelty effect | Short-term spike, then decay | Run longer; measure sustained behavior |
+| 早停 Early stopping / Peeking | 膨胀第一类错误 | Sequential testing (mSPRT) 或严格执行预设 n |
+| 多指标 Multiple metrics | FWER 膨胀 | 预设主指标；次要指标用 FDR |
+| 网络效应 Spillover | 控制组/实验组渗透 | Cluster randomization |
+| 辛普森悖论 Simpson's Paradox | 分层后方向反转 | 按分群分层检验 |
+| 新奇效应 Novelty effect | 短期激增后回落 | 延长实验周期；衡量持续行为 |
 
-## 6.5 Multiple Testing
+## 6.5 多重检验 Multiple Testing
 
 ```
-FWER (Family-Wise Error Rate) with m independent tests:
-P(≥1 false positive) = 1 − (1−α)^m
+m 个独立检验，FWER（族错误率）:
+P(至少1个假阳性) = 1 − (1−α)^m
 
-m=20, α=0.05:  FWER = 1 − 0.95²⁰ ≈ 64.2% !
+m=20，α=0.05:  FWER = 1 − 0.95²⁰ ≈ 64.2% ！！
 ```
 
-| Method | Controls | Formula | Conservative? |
+| 方法 Method | 控制目标 Controls | 公式 Formula | 保守程度 Conservative |
 |---|---|---|---|
-| **Bonferroni** | FWER | α' = α/m | Very (use for confirmatory) |
-| **Holm-Bonferroni** | FWER | Sequential Bonferroni | Less than plain Bonferroni |
-| **Benjamini-Hochberg (BH)** | FDR | Sort p-values; reject p_{(i)} ≤ (i/m)·α | Least (use for exploration) |
+| **Bonferroni** | FWER | α' = α/m | 最保守 Very（用于验证性研究）|
+| **Holm-Bonferroni** | FWER | 逐步 Bonferroni | 稍弱 |
+| **Benjamini-Hochberg (BH)** | FDR | 排序后 p_{(i)} ≤ (i/m)·α | 最宽松（用于探索性研究）|
 
-**FDR (False Discovery Rate)** = expected fraction of rejected H₀ that are false positives. Preferred in genomics, multi-metric dashboards.
+**FDR（False Discovery Rate）** = 被拒绝的 H₀ 中实际为假阳性的期望比例。适用于基因组学、多指标 dashboard。
 
-## 6.6 Common Interview: Power Analysis
+## 6.6 提升统计效能 What Increases Power
 
 ```
-"What increases statistical power?"
-1. Larger n         → SE shrinks → easier to detect effect
-2. Larger effect size (Δ = |μ₁−μ₂|) → easier to detect
-3. Smaller σ        → less noise
-4. Higher α         → (but at cost of more false positives)
-5. One-tailed test  → (but requires directional prior)
+增大效能的方法：
+1. 更大的 n              → SE 缩小 → 更容易检测效应
+2. 更大的效应量 Δ = |μ₁−μ₂| → 信号更强
+3. 更小的 σ（降低噪声）  → 信噪比提升
+4. 更大的 α              → 代价是更多假阳性
+5. 单尾检验 One-tailed   → 代价是需要先验方向知识
 ```
 
 ---
 
-# 7. Expected Value — Problem-Solving Tricks
+# 7. 期望值解题技巧 Expected Value — Problem-Solving Tricks
 
-## Trick 1 — Linearity (no independence needed)
-
-```
-E[aX + bY + c] = aE[X] + bE[Y] + c   ← always true
-
-Classic: E[fixed points in random permutation of n] = 1
-(sum of n indicator variables, each with E = 1/n)
-```
-
-## Trick 2 — Condition on first step
+## 技巧1 — 线性期望 Linearity（不需要独立）
 
 ```
-"Expected flips until first head (p = prob of H)":
+E[aX + bY + c] = aE[X] + bE[Y] + c   ← 永远成立 always true
+
+经典题：n 个人的帽子随机排列，平均拿到自己帽子的期望人数 = 1
+（n 个示性变量，每个期望值 = 1/n，加总 = 1）
+```
+
+## 技巧2 — 条件第一步 Condition on First Step
+
+```
+"期望正面次数（硬币正面概率 p）":
   E[X] = 1·p + (1 + E[X])·(1−p)  →  E[X] = 1/p
 
-Template: E[X] = (immediate payoff) + (prob of continue) × E[X]
+模板: E[X] = (即时收益) + (继续的概率) × E[X]
 ```
 
-## Trick 3 — Indicator variables
+## 技巧3 — 示性变量 Indicator Variables
 
 ```
-"Expected number of distinct coupons after n draws (k types)":
-  Iⱼ = 1 if coupon j appears at least once
+"n 次抽取（k 种）得到的不同优惠券期望种数":
+  Iⱼ = 1 当且仅当 coupon j 至少出现一次
   E[Iⱼ] = 1 − ((k−1)/k)^n
-  E[distinct] = k · (1 − ((k−1)/k)^n)
+  E[不同种数] = k · (1 − ((k−1)/k)^n)
 ```
 
-## Trick 4 — Wald's Identity
+## 技巧4 — Wald 恒等式 Wald's Identity
 
 ```
-Xᵢ i.i.d. with mean μ; N = stopping time with E[N] < ∞:
+Xᵢ i.i.d.，均值 μ；N 为停止时间，E[N] < ∞:
   E[X₁ + X₂ + ... + X_N] = μ · E[N]
 ```
 
-## Trick 5 — Eve's Law (Total Variance)
+## 技巧5 — Eve 定律（全方差公式）Eve's Law
 
 ```
 Var(X) = E[Var(X|Y)] + Var(E[X|Y])
-       = (expected within-group variance) + (variance of group means)
+       = 组内方差的期望 + 组间均值的方差
 
-Compound Poisson: N~Pois(λ), each Xᵢ has mean μ and var σ²:
+复合泊松 Compound Poisson：N~Pois(λ)，每个 Xᵢ 均值 μ，方差 σ²:
   E[S] = λμ
   Var[S] = λ(μ² + σ²) = λ E[X²]
 ```
 
-## Trick 6 — Order Statistics
+## 技巧6 — 顺序统计量 Order Statistics
 
 ```
-X₁,...,Xₙ ~ U(0,1) i.i.d., X_(k) = k-th smallest:
+X₁,...,Xₙ ~ U(0,1) i.i.d.，X_(k) = 第 k 小:
   E[X_(k)] = k/(n+1)
-  E[max] = n/(n+1)      E[min] = 1/(n+1)
+  E[最大值 max] = n/(n+1)
+  E[最小值 min] = 1/(n+1)
 
-General: X_(k) ~ Beta(k, n−k+1)
+一般形式: X_(k) ~ Beta(k, n−k+1)
 ```
 
-## Trick 7 — Geometric Series / Telescoping
+## 技巧7 — 尾概率求期望 E[X] via CDF
 
 ```
-Σ_{k=0}^∞ kpqᵏ⁻¹ = 1/p     (expected value of Geometric(p))
+非负整数随机变量:  E[X] = Σ_{k=0}^∞ P(X > k)
+非负连续随机变量:  E[X] = ∫₀^∞ P(X > t) dt
 
-For E[X] when X counts until first success in rounds:
-  Often easier to write E[X] = Σ_{k=0}^∞ P(X > k)   (CDF form)
+适用于：等待时间、停止时间等，常使几何级数更容易计算
 ```
 
 ---
 
-# 8. Optimal Stopping — Decision Templates
+# 8. 最优停止决策模板 Optimal Stopping — Decision Templates
 
-## Universal recurrence
-
-```
-V[k] = expected value with k decisions remaining
-V[1] = base case (forced last action)
-V[k] = E[ max(take_now, V[k−1]) ]   or   E[ max(reward, threshold) ]
-```
-
-## Secretary problem (1/e rule)
+## 通用递推 Universal Recurrence
 
 ```
-Reject first ⌊n/e⌋ ≈ 0.368n candidates.
-Pick first one strictly better than all seen.
-P(success) → 1/e ≈ 0.368.
+V[k] = 剩余 k 次决策机会时的期望最优值
+V[1] = 基础情况（被迫执行最后一次）
+V[k] = E[ max(立即收益, V[k−1]) ]
 ```
 
-## Prophet inequality
+## 秘书问题 Secretary Problem（1/e 规则）
 
 ```
-Single threshold τ: set P(max Xᵢ ≥ τ) = 1/2.
-Guarantees ≥ 0.5 · E[max Xᵢ] in expectation.
+拒绝前 ⌊n/e⌋ ≈ 0.368n 个候选人
+之后选第一个优于所有已见过的
+P(成功选到最佳) → 1/e ≈ 0.368
 ```
 
-## Dice game (n rolls, take highest)
+## 先知不等式 Prophet Inequality
 
 ```
-Threshold rule: V[k] = threshold for stopping
+单阈值 τ：设 P(max Xᵢ ≥ τ) = 1/2
+可保证期望收益 ≥ 0.5 · E[max Xᵢ]
+```
+
+## 骰子游戏 Dice Game（n 次投掷，保留最高值）
+
+```
 V[1] = 3.5
 V[k] = (1/6) Σᵥ max(v, V[k−1])
 
-n=2 → V=4.25, stop if roll > 4.25 (i.e., roll 5 or 6)
-n=3 → V=4.67, stop first roll if ≥5; stop second if ≥4; keep third
+n=2 → V=4.25，第一次 ≥5 则停（即 5 或 6）
+n=3 → V=4.67，第一次 ≥5 停；第二次 ≥4 停；否则用第三次
 ```
 
 ---
 
-# 9. Quick Reference — Must-Know Answers
+# 9. 必背答案速查 Quick Reference — Must-Know Answers
 
-| Question | Answer |
+| 问题 Question | 答案 Answer |
 |---|---|
-| E[fair die] | 3.5 |
-| Var(fair die) | 35/12 ≈ 2.917 |
-| E[max(X₁,X₂)] two fair dice | 161/36 ≈ 4.47 |
-| E[min(X₁,X₂)] two fair dice | 91/36 ≈ 2.53 (sum to 7 ✓) |
-| Expected flips for 1st head | 2 |
-| Expected flips for HHH | 14 |
-| Expected flips for HTH | 10 |
-| Expected flips for HH vs TH — which is longer? | HH (14), TH (8) — TH is shorter |
-| Coupon collector (n types): E[draws] | n·Hₙ ≈ n ln n + 0.577n |
-| Coupon collector: Var | π²n²/6 |
-| Gambler's ruin P(win) from position i, range [0,N] | i/N (symmetric) |
-| Gambler's ruin E[time] | i(N−i) |
-| Secretary problem cutoff | n/e ≈ 0.368n |
-| 3 classifiers @ 80%, majority | 0.896 |
-| Mismatch: P(HH first) vs P(TH first) starting fresh | P(HH first) = 1/4, P(TH first) = 1/4 **BUT** in a sequence HH requires 2 consecutive H, while TH is easier to "catch"—TH appears first with prob 3/4 |
-| Two-envelope paradox | Switching and staying have same expected value = 3m/2 |
-| Simpson's Paradox exists? | Yes — can reverse direction when stratified |
+| 公平骰子 E[X] | 3.5 |
+| 公平骰子 Var(X) | 35/12 ≈ 2.917 |
+| E[两骰子最大值 max] | 161/36 ≈ 4.47 |
+| E[两骰子最小值 min] | 91/36 ≈ 2.53（两者之和 = 7 ✓）|
+| 期望抛几次出现第一个正面 | 2 |
+| 期望抛几次出现 HHH | 14 |
+| 期望抛几次出现 HTH | 10 |
+| HH vs TH，哪个序列先出现？| HH 平均 14 次，TH 平均 8 次；TH 先出现概率 3/4 |
+| 优惠券收集（n 种）期望抽数 | n·Hₙ ≈ n ln n + 0.577n |
+| 优惠券收集方差 | π²n²/6 |
+| 赌徒破产胜率（位置 i，范围 [0,N]）| i/N（对称时）|
+| 赌徒破产期望步数 | i(N−i) |
+| 秘书问题最优截止点 | n/e ≈ 0.368n |
+| 3 个独立分类器各 80%，多数投票准确率 | 0.896 |
+| 两信封悖论结论 | 换与不换期望相同，均为 3m/2 |
+| 辛普森悖论 Simpson's Paradox | 分层后趋势可能与汇总完全相反（存在混淆变量时）|
 
 ---
 
-# PART II — ML & SYSTEM CONCEPTS *(non-coding)*
+# 第二部分 — ML 与系统概念 *(非编程)*
 
 ---
 
-# 10. Transformer Architecture — Formulas & Variants
+# 10. Transformer 架构公式与变体 Formulas & Variants
 
-## Core formulas
+## 核心公式 Core Formulas
 
 ```
-Scaled dot-product attention:
+缩放点积注意力 Scaled dot-product attention:
   Attention(Q,K,V) = softmax(QKᵀ / √d_k) · V
 
-Multi-head:
+多头注意力 Multi-head:
   MultiHead(Q,K,V) = Concat(head₁,...,headₕ) · Wᴼ
   headᵢ = Attention(Q·Wᵢᵠ, K·Wᵢᴷ, V·Wᵢᵛ)
 
-Positional encoding (sinusoidal):
+正弦位置编码 Sinusoidal PE:
   PE(pos,2i)   = sin(pos / 10000^{2i/d})
   PE(pos,2i+1) = cos(pos / 10000^{2i/d})
 ```
 
-## Attention head variants
+## 注意力头变体 Attention Head Variants
 
-| Variant | Q heads | K/V heads | Use case |
+| 变体 Variant | Q 头数 | K/V 头数 | 使用场景 |
 |---|---|---|---|
-| MHA (vanilla) | H | H | Small models |
-| MQA | H | 1 | Inference speed (PaLM, Falcon) |
-| GQA | H | G (G<H) | Llama 2/3, balance |
-| Cross-attention | from decoder | from encoder | Encoder-decoder |
+| MHA（标准）| H | H | 小模型 |
+| MQA | H | 1 | 推理速度优先（PaLM, Falcon）|
+| GQA | H | G（G<H）| 均衡方案（Llama 2/3）|
+| Cross-attention | 来自 decoder | 来自 encoder | Encoder-decoder 架构 |
 
-## Positional encodings
+## 位置编码 Positional Encodings
 
-| Type | Idea | Pros / Cons |
+| 类型 Type | 原理 Idea | 优劣 Pros/Cons |
 |---|---|---|
-| Sinusoidal | Fixed sin/cos | Extrapolates poorly |
-| Learned absolute | nn.Embedding | Simple; bounded length |
-| RoPE | Rotate Q,K by angle θ=pos·10000^{-2i/d} | Llama, GPT-NeoX; relative-position aware |
-| ALiBi | Add linear bias −m·dist to attn scores | Train short, infer long |
+| 正弦 Sinusoidal | 固定 sin/cos | 外推差 |
+| 可学习绝对 Learned | nn.Embedding | 简单；长度有上限 |
+| RoPE | 按 θ=pos·10000^{-2i/d} 旋转 Q,K | Llama, GPT-NeoX；相对位置感知强 |
+| ALiBi | 在注意力分数上加线性偏置 −m·dist | 短序列训练，长序列推理 |
 
-## Normalization variants
+## 归一化变体 Normalization Variants
 
-| Variant | Formula | Notes |
+| 变体 | 公式 | 备注 |
 |---|---|---|
-| Post-LN (original) | LN(x + Sublayer(x)) | Hard to train deep |
-| Pre-LN | x + Sublayer(LN(x)) | Default in modern LLMs |
-| RMSNorm | x / RMS(x) · γ (no mean centering) | Llama; faster, no bias |
+| Post-LN（原始）| LN(x + Sublayer(x)) | 深层训练困难 |
+| Pre-LN | x + Sublayer(LN(x)) | 现代 LLM 默认 |
+| RMSNorm | x / RMS(x) · γ（无均值中心化）| Llama；更快，无偏置项 |
 
-## Complexity
+## 复杂度 Complexity
 
-| Component | Time | Memory |
+| 组件 Component | 时间 Time | 内存 Memory |
 |---|---|---|
-| Attention QKᵀ | O(T²d) | O(T²) |
-| FFN (4× expand) | O(Td²) | O(Td) |
-| FlashAttention | O(T²d) time | **O(T) memory** (tiled, IO-aware) |
+| 注意力 QKᵀ | O(T²d) | O(T²) |
+| FFN（4× 扩展）| O(Td²) | O(Td) |
+| FlashAttention | O(T²d) 时间 | **O(T) 内存**（分块 IO 感知）|
 
-## Key numbers
+## 关键参数 Key Numbers
 
 ```
-d_model = H × d_k         (split, NOT duplicate)
-GPT-2 small:  d=768,  H=12, 12 layers
-GPT-3 175B:   d=12288, H=96, 96 layers
-Llama-2 7B:   d=4096,  H=32, 32 layers
+d_model = H × d_k         （头是分割的，不是复制的 split, NOT duplicate）
+GPT-2 small:  d=768,  H=12，12 层
+GPT-3 175B:   d=12288，H=96，96 层
+Llama-2 7B:   d=4096，H=32，32 层
 ```
 
 ---
 
-# 11. Deep Learning Cookbook
+# 11. 深度学习速查 Deep Learning Cookbook
 
-## Activations
+## 激活函数 Activations
 
-| Name | Formula | Use |
+| 名称 | 公式 | 使用场景 |
 |---|---|---|
-| ReLU | max(0, x) | Default; can "die" |
+| ReLU | max(0, x) | 默认；可能"死亡" |
 | GELU | x·Φ(x) | BERT, GPT-2 |
-| SiLU/Swish | x·σ(x) | Llama, modern |
-| Sigmoid | 1/(1+e⁻ˣ) | Binary output; **d/dx = σ(x)(1−σ(x))** |
-| Tanh | (eˣ−e⁻ˣ)/(eˣ+e⁻ˣ) | RNNs |
-| Softmax | eˣⁱ / Σeˣʲ | Output probabilities |
+| SiLU/Swish | x·σ(x) | Llama，现代 |
+| Sigmoid | 1/(1+e⁻ˣ) | 二分类输出；**导数 = σ(x)(1−σ(x))，最大值在 x=0 时为 1/4** |
+| Tanh | (eˣ−e⁻ˣ)/(eˣ+e⁻ˣ) | RNN |
+| Softmax | eˣⁱ / Σeˣʲ | 概率输出 |
 
-**Sigmoid derivative:** σ'(x) = σ(x)(1−σ(x)); max at x=0, value = 1/4.
+## 初始化 Initialization
 
-## Initialization
-
-| Method | Variance | Use |
+| 方法 Method | 方差 Variance | 适用 Use |
 |---|---|---|
 | Xavier/Glorot | 2/(fan_in + fan_out) | Sigmoid/tanh |
 | He/Kaiming | 2/fan_in | ReLU/SiLU |
-| Transformer default | N(0, 0.02²) | GPT-style |
+| Transformer 默认 | N(0, 0.02²) | GPT 风格 |
 
-## Regularization
+## 正则化 Regularization
 
-| Method | How it helps |
+| 方法 | 作用 |
 |---|---|
-| Dropout | Random zero-out → ensemble effect; p=0.1 for transformers |
-| Weight decay (L2) | Penalizes large weights → smaller model space |
-| Label smoothing α=0.1 | Prevents overconfident predictions |
-| Gradient clipping ‖g‖≤1 | Prevents exploding gradients |
-| Early stopping | Stops at minimum val loss |
+| Dropout | 随机置零 → 集成效果；Transformer 用 p=0.1 |
+| Weight decay (L2) | 惩罚大权重 → 缩小模型空间 |
+| Label smoothing α=0.1 | 防止过度自信预测，改善校准 |
+| Gradient clipping ‖g‖≤1 | 防止梯度爆炸 |
+| Early stopping | 在验证损失最低点停止 |
 
-## Backprop key gradients
+## 反向传播关键梯度 Backprop Key Gradients
 
 ```
 Y = XW:      dL/dX = dL/dY · Wᵀ
              dL/dW = Xᵀ · dL/dY
-Chain rule:  dL/dx = dL/dy · dy/dx
+链式法则:    dL/dx = dL/dy · dy/dx
 ```
 
-## Bias–Variance in ML
+## 偏差-方差 Bias–Variance in ML
 
-| Symptom | Cause | Fix |
+| 现象 Symptom | 原因 Cause | 修复 Fix |
 |---|---|---|
-| High train loss | High bias (underfitting) | Bigger model, more features |
-| High val loss, low train loss | High variance (overfitting) | More data, dropout, regularization |
+| 训练损失高 High train loss | 高偏差（欠拟合）| 更大模型，更多特征 |
+| 训练低验证高 Val >> Train | 高方差（过拟合）| 更多数据，dropout，正则化 |
 
 ---
 
-# 12. LLM-specific Concepts
+# 12. LLM 专项概念 LLM-specific Concepts
 
-## Tokenization methods
+## Tokenization
 
-| Method | Used by | Idea |
+| 方法 | 使用者 | 原理 |
 |---|---|---|
-| BPE | GPT-2/3, Llama | Greedy merge frequent pairs |
-| WordPiece | BERT | Merge by likelihood |
-| SentencePiece | T5, Llama, Gemma | Raw bytes; language-agnostic |
+| BPE | GPT-2/3, Llama | 贪心合并高频 pair |
+| WordPiece | BERT | 按似然合并 |
+| SentencePiece | T5, Llama, Gemma | 原始字节；语言无关 |
 
-## Generation strategies
+## 生成策略 Generation Strategies
 
-| Strategy | Hyperparameter | Notes |
+| 策略 Strategy | 超参 Hyperparameter | 说明 |
 |---|---|---|
-| Greedy | none | Fast; degenerates (repetition) |
-| Beam search | num_beams | Good for translation; less diverse |
-| Top-k | k=50 | Sample from k highest prob tokens |
-| Top-p (nucleus) | p=0.9 | Sample from smallest set summing to p |
-| Temperature | T: <1 sharpen, >1 flatten | Applied before softmax |
+| Greedy | 无 | 快速；容易重复退化 |
+| Beam search | num_beams | 翻译好；多样性差 |
+| Top-k | k=50 | 从概率最高的 k 个采样 |
+| Top-p (nucleus) | p=0.9 | 从累积概率 ≥ p 的最小集合采样 |
+| Temperature | T<1 变尖，T>1 变平 | 在 softmax 前除以 T |
 
-## Fine-tuning techniques
+## 微调方法 Fine-tuning Methods
 
-| Method | Trainable % | Use |
+| 方法 | 可训练参数 | 使用场景 |
 |---|---|---|
-| Full FT | 100% | Best quality if compute available |
-| LoRA | ~0.5% | Low-rank adapters; most popular |
-| QLoRA | ~0.5% on 4-bit base | Single-GPU 70B fine-tuning |
-| Prefix tuning | learned KV prefix | Task tokens |
-| RLHF / DPO | reward-aligned | Alignment |
+| Full FT | 100% | 效果最好，算力充足时 |
+| LoRA | ~0.5%（低秩适配器）| 最流行 |
+| QLoRA | ~0.5% 在 4-bit 基础上 | 单卡微调 70B |
+| Prefix tuning | 可学习 KV 前缀 | 任务特定 token |
+| RLHF / DPO | 奖励对齐 | 价值对齐 Alignment |
 
-## LLM one-liners
+## LLM 一句话概念 One-liners
 
-| Term | Definition |
+| 术语 Term | 定义 |
 |---|---|
-| KV cache | Cache K,V across decode steps → O(T) per step vs O(T²) |
-| MoE | Only top-k of N FFNs activate per token |
-| Speculative decoding | Draft model proposes tokens; big model verifies |
-| In-context learning | Few-shot examples in prompt; no weight update |
-| RAG | Retrieve relevant docs → concat to prompt → generate |
-| Hallucination | Confident, wrong factual output |
+| KV cache | 缓存 K,V → 每步解码 O(T) vs O(T²) |
+| MoE（混合专家）| 每个 token 只激活 top-k 个 FFN |
+| Speculative decoding | 小草稿模型提议 token，大模型验证 |
+| In-context learning | 示例在 prompt 中；**无参数更新** |
+| RAG | 检索相关文档 → 拼接到 prompt → 生成 |
+| Hallucination（幻觉）| 自信但事实错误的输出 |
 
 ---
 
-# 13. ML Systems & Production
+# 13. ML 系统与生产 ML Systems & Production
 
-## Training pipeline
+## 训练流水线 Training Pipeline
 
 ```
-Data → Features → Model → Eval → Deploy → Monitor → Retrain
+数据 Data → 特征 Features → 模型 Model → 评估 Eval → 部署 Deploy → 监控 Monitor → 重训 Retrain
 ```
 
-## Serving optimizations
+## 推理优化 Serving Optimizations
 
-| Technique | Gain | Notes |
+| 技术 Technique | 收益 Gain | 工具 |
 |---|---|---|
-| Batching (continuous) | throughput | vLLM, TGI |
-| Quantization INT8/INT4 | 2–4× memory | GPTQ, AWQ |
-| Distillation | smaller model | Student learns from teacher |
-| KV cache | O(T) decode | Cache across generation steps |
-| Speculative decoding | latency | Draft + verify |
+| 连续批处理 Continuous batching | 吞吐量 | vLLM, TGI |
+| 量化 Quantization INT8/INT4 | 内存 2–4× | GPTQ, AWQ |
+| 蒸馏 Distillation | 更小模型 | 学生从教师学习 |
+| KV cache | 解码 O(T) | 跨生成步缓存 |
+| Speculative decoding | 延迟 | 草稿+验证 |
 
-## Distributed training strategies
+## 分布式训练策略 Distributed Training
 
-| Strategy | Splits | Use when |
+| 策略 Strategy | 分割对象 Splits | 适用场景 |
 |---|---|---|
-| Data parallel (DDP) | batch | Model fits 1 GPU |
-| Tensor parallel | weight matrices | Layer too big |
-| Pipeline parallel | layers | Memory-bound |
-| ZeRO / FSDP | optim states+grads+params | Large models, limited GPU |
+| 数据并行 Data parallel (DDP) | batch | 模型能放入单卡 |
+| 张量并行 Tensor parallel | 权重矩阵 | 单层太大 |
+| 流水线并行 Pipeline parallel | 层 layers | 内存受限 |
+| ZeRO / FSDP | 优化器状态+梯度+参数 | 大模型+有限 GPU |
 
-## Eval metrics
+## 评估指标 Eval Metrics
 
-| Task | Primary metrics |
+| 任务 Task | 主要指标 Primary Metrics |
 |---|---|
-| Binary classification | Accuracy, Precision, Recall, F1, ROC-AUC, PR-AUC |
-| Multi-class | Macro-F1, Confusion matrix |
-| Regression | MAE, RMSE, R² |
-| Ranking / IR | nDCG, MAP, MRR, Hit@k |
-| Generation | BLEU, ROUGE, BERTScore, Perplexity |
+| 二分类 Binary | Accuracy, Precision, Recall, F1, ROC-AUC, PR-AUC |
+| 多分类 Multi-class | Macro-F1，混淆矩阵 Confusion Matrix |
+| 回归 Regression | MAE, RMSE, R² |
+| 排序/信息检索 Ranking | nDCG, MAP, MRR, Hit@k |
+| 文本生成 Generation | BLEU, ROUGE, BERTScore, Perplexity |
 | LLM | MMLU, HumanEval, MT-Bench, win-rate |
 
 ---
 
-# 14. Majority Vote / Ensemble — Theory
+# 14. 多数投票与集成理论 Majority Vote / Ensemble — Theory
 
-## Master formula (n independent voters @ accuracy p, n odd)
+## 主公式 Master Formula（n 个独立投票者，准确率 p，n 为奇数）
 
 ```
-P(majority correct) = Σ_{k=⌈n/2⌉}^{n} C(n,k) pᵏ (1−p)^{n−k}
+P(多数正确) = Σ_{k=⌈n/2⌉}^{n} C(n,k) pᵏ (1−p)^{n−k}
 ```
 
-## Quick table
+## 快速对照表 Quick Table
 
 | n | p=0.6 | p=0.7 | p=0.8 | p=0.9 |
 |---|---|---|---|---|
@@ -818,30 +853,30 @@ P(majority correct) = Σ_{k=⌈n/2⌉}^{n} C(n,k) pᵏ (1−p)^{n−k}
 | 5 | 0.683 | 0.837 | 0.942 | 0.991 |
 | 11 | 0.753 | 0.922 | 0.988 | 0.9999 |
 
-**Condorcet theorem:** p > 0.5 and independent → accuracy → 1 as n → ∞.
+**Condorcet 定理：** p > 0.5 且独立 → n → ∞ 时准确率 → 1。
 
-## Bias-variance for bagging
-
-```
-Var(f̄) = ρ·σ_f² + (1−ρ)/M · σ_f²    →    ρ·σ_f²  as M → ∞
-```
-Bagging reduces independent variance. Random Forest reduces ρ further via feature subsetting.
-
-## AdaBoost training error bound
+## Bagging 的偏差-方差 Bias–Variance for Bagging
 
 ```
-training_error ≤ exp(−2 · Σ_t γ_t²)     where γ_t = 0.5 − ε_t
+Var(f̄) = ρ·σ_f² + (1−ρ)/M · σ_f²    →    ρ·σ_f²  当 M → ∞
+```
+Bagging 降低独立方差；Random Forest 通过特征子集进一步降低 ρ。
+
+## AdaBoost 训练误差上界
+
+```
+training_error ≤ exp(−2 · Σ_t γ_t²)     其中 γ_t = 0.5 − ε_t
 ```
 
 ---
 
-# PART III — CODING
+# 第三部分 — 编程 Coding
 
 ---
 
-# 15. Matrix Algorithms — Spiral, Rotation, Diagonal
+# 15. 矩阵算法 Matrix Algorithms — Spiral, Rotation, Diagonal
 
-## Pattern A — Shrinking boundaries (outside-in spiral)
+## 模式 A — 缩小边界（由外向内螺旋）Outside-in Spiral
 
 ```python
 def spiral_order(matrix):
@@ -850,8 +885,8 @@ def spiral_order(matrix):
     top, bottom = 0, len(matrix) - 1
     left, right = 0, len(matrix[0]) - 1
     while top <= bottom and left <= right:
-        for j in range(left, right + 1):   res.append(matrix[top][j]);  top += 1
-        for i in range(top, bottom + 1):   res.append(matrix[i][right]); right -= 1
+        for j in range(left, right + 1):    res.append(matrix[top][j]);   top += 1
+        for i in range(top, bottom + 1):    res.append(matrix[i][right]); right -= 1
         if top <= bottom:
             for j in range(right, left-1, -1): res.append(matrix[bottom][j]); bottom -= 1
         if left <= right:
@@ -859,15 +894,15 @@ def spiral_order(matrix):
     return res
 ```
 
-## Pattern B — Expanding step 1,1,2,2,3,3,... (inside-out / arbitrary start)
+## 模式 B — 扩展步长 1,1,2,2,3,3,...（由内向外 / 任意起点）
 
 ```python
 def spiral_from(R, C, rStart, cStart):
     res = [[rStart, cStart]]
-    dx, dy = [0,1,0,-1], [1,0,-1,0]   # R, D, L, U
+    dx, dy = [0,1,0,-1], [1,0,-1,0]   # 右下左上 R, D, L, U
     x, y, step, d = rStart, cStart, 1, 0
     while len(res) < R*C:
-        for _ in range(2):
+        for _ in range(2):              # 每个步长用两次
             for _ in range(step):
                 x += dx[d]; y += dy[d]
                 if 0 <= x < R and 0 <= y < C:
@@ -878,19 +913,21 @@ def spiral_from(R, C, rStart, cStart):
     return res
 ```
 
-## Rotate Image 90° clockwise (in-place)
+## 原地顺时针旋转 90° In-place Rotate
 
 ```python
 def rotate(M):
     n = len(M)
+    # 第一步：转置 Transpose
     for i in range(n):
         for j in range(i+1, n):
-            M[i][j], M[j][i] = M[j][i], M[i][j]   # transpose
+            M[i][j], M[j][i] = M[j][i], M[i][j]
+    # 第二步：每行翻转 Reverse each row
     for row in M:
-        row.reverse()                                # reverse each row
+        row.reverse()
 ```
 
-## Diagonal traverse
+## 对角线遍历 Diagonal Traverse
 
 ```python
 from collections import defaultdict
@@ -905,20 +942,20 @@ def diag(matrix):
     return out
 ```
 
-## Decision tree
+## 决策树 Decision Tree
 
-| Spiral type | Pattern |
+| 螺旋类型 | 用法 |
 |---|---|
-| Outside-in, corner start | Pattern A |
-| Inside-out / arbitrary start | Pattern B |
-| Diagonal | defaultdict keyed by i±j |
-| In-place 90° rotation | transpose + row reverse |
+| 由外向内，固定角落起点 | 模式 A Pattern A |
+| 由内向外 / 任意起点 | 模式 B Pattern B |
+| 对角线 / 反对角线 | defaultdict 按 i±j |
+| 原地旋转 90° | 转置 + 行翻转 |
 
 ---
 
-# 16. Coding Patterns (DSA)
+# 16. 编程模式 DSA Coding Patterns
 
-## Two pointers
+## 双指针 Two Pointers
 
 ```python
 l, r = 0, len(arr) - 1
@@ -929,7 +966,7 @@ while l < r:
     else: r -= 1
 ```
 
-## Sliding window
+## 滑动窗口 Sliding Window
 
 ```python
 from collections import Counter
@@ -945,7 +982,7 @@ def longest_k_distinct(s, k):
     return best
 ```
 
-## Binary search (leftmost template)
+## 二分查找通用模板 Binary Search
 
 ```python
 def bisect_left(arr, target):
@@ -957,19 +994,19 @@ def bisect_left(arr, target):
     return lo
 ```
 
-## DP pattern recognition
+## DP 模式识别 DP Pattern Recognition
 
-| Pattern | Signature |
+| 模式 Pattern | 特征 Signature |
 |---|---|
-| 1D linear | dp[i] from dp[i-1], dp[i-2] |
-| 2D grid paths | dp[i][j] from neighbors |
-| Knapsack 0/1 | dp[i][w] = max(skip, take) |
-| LIS | O(n log n) via patience sort |
-| Edit distance | dp[i][j] from 3 transitions |
-| Interval DP | dp[i][j] = best over all splits |
-| Backward induction | V[k] = expected value with k steps left |
+| 一维线性 1D | dp[i] 依赖 dp[i-1], dp[i-2] |
+| 二维网格 2D grid | dp[i][j] 依赖邻居 |
+| 0-1 背包 Knapsack | dp[i][w] = max(跳过, 选取) |
+| 最长递增子序列 LIS | O(n log n)，patience sort |
+| 编辑距离 Edit distance | dp[i][j] 有 3 种转移 |
+| 区间 DP Interval | dp[i][j] = 枚举所有分割点 |
+| 逆向归纳 Backward induction | V[k] = 剩余 k 步的期望最优值 |
 
-## BFS template
+## BFS 模板
 
 ```python
 from collections import deque
@@ -983,23 +1020,23 @@ def bfs(start, neighbors):
                 seen.add(nb); q.append(nb)
 ```
 
-## Heap (priority queue)
+## 堆 Heap（优先队列）
 
 ```python
 import heapq
 heap = []
 heapq.heappush(heap, (priority, item))
 priority, item = heapq.heappop(heap)
-# Top-k: maintain min-heap of size k; push and pop when len > k
+# Top-k：维护大小为 k 的最小堆；超过 k 时 pop
 ```
 
-## Union-Find (Disjoint Set Union)
+## 并查集 Union-Find (DSU)
 
 ```python
 class DSU:
     def __init__(self, n): self.p = list(range(n)); self.rank = [0]*n
-    def find(self, x): 
-        if self.p[x] != x: self.p[x] = self.find(self.p[x])  # path compress
+    def find(self, x):
+        if self.p[x] != x: self.p[x] = self.find(self.p[x])  # 路径压缩
         return self.p[x]
     def union(self, x, y):
         px, py = self.find(x), self.find(y)
@@ -1010,10 +1047,9 @@ class DSU:
         return True
 ```
 
-## Monotone stack
+## 单调栈 Monotone Stack
 
 ```python
-# Next greater element
 def next_greater(nums):
     res, stack = [-1]*len(nums), []
     for i, v in enumerate(nums):
@@ -1025,15 +1061,15 @@ def next_greater(nums):
 
 ---
 
-# 17. PyTorch Essentials
+# 17. PyTorch 要点 PyTorch Essentials
 
-## Training loop template
+## 训练循环模板 Training Loop
 
 ```python
 model.train()
 for x, y in loader:
     x, y = x.to(device), y.to(device)
-    optimizer.zero_grad()                               # ← never forget
+    optimizer.zero_grad()                               # ← 千万别忘
     pred = model(x)
     loss = criterion(pred, y)
     loss.backward()
@@ -1041,24 +1077,24 @@ for x, y in loader:
     optimizer.step()
 
 model.eval()
-with torch.no_grad():                                   # ← never forget
+with torch.no_grad():                                   # ← 千万别忘
     for x, y in val_loader:
         pred = model(x.to(device))
 ```
 
-## 5 common bugs
+## 5 大常见 Bug
 
-| Bug | Symptom | Fix |
+| Bug | 现象 Symptom | 修复 Fix |
 |---|---|---|
-| Forget `zero_grad()` | Loss explodes, gradients accumulate | Add before backward |
-| Forget `model.eval()` | Dropout/BN wrong at val | Set before inference |
-| Forget `no_grad()` | OOM during inference | Wrap inference in `with torch.no_grad()` |
-| `print(loss)` | Graph held in memory | Use `loss.item()` |
-| Device mismatch | RuntimeError | Move all tensors to same device |
+| 忘记 `zero_grad()` | 梯度累积，loss 爆炸 | 每次 backward 前调用 |
+| 忘记 `model.eval()` | Dropout/BN 在验证集行为错误 | 推理前设置 |
+| 忘记 `no_grad()` | 推理时 OOM | 用 `with torch.no_grad()` 包裹 |
+| `print(loss)` | 计算图驻留内存 | 用 `loss.item()` |
+| 设备不一致 Device mismatch | RuntimeError | 所有 tensor 移到同一设备 |
 
-## Shapes cheatsheet
+## 形状速查 Shapes
 
-| Layer | Input | Output |
+| 层 Layer | 输入 Input | 输出 Output |
 |---|---|---|
 | `nn.Linear(in, out)` | (*, in) | (*, out) |
 | `nn.Conv2d(C, F, k)` | (B, C, H, W) | (B, F, H', W') |
@@ -1066,28 +1102,28 @@ with torch.no_grad():                                   # ← never forget
 | `nn.LayerNorm(d)` | (*, d) | (*, d) |
 | `nn.BatchNorm1d(C)` | (B, C) | (B, C) |
 
-## Losses
+## 损失函数 Losses
 
-| Task | Loss | Note |
+| 任务 Task | 损失 Loss | 备注 Note |
 |---|---|---|
-| Binary | `BCEWithLogitsLoss` | Input logits, not probs |
-| Multi-class | `CrossEntropyLoss` | Logits + integer labels |
-| Regression | `MSELoss / HuberLoss` | Huber for outliers |
+| 二分类 Binary | `BCEWithLogitsLoss` | 输入 logits，不是概率 |
+| 多分类 Multi-class | `CrossEntropyLoss` | logits + 整数标签 |
+| 回归 Regression | `MSELoss / HuberLoss` | Huber 对异常值更鲁棒 |
 
 ```python
-# Cross-entropy on (B, C) logits + (B,) integer labels
+# 多分类：(B, C) logits + (B,) 整数标签
 loss = F.cross_entropy(logits, labels)   # = log_softmax + NLL
 ```
 
-## Optimizers
+## 优化器 Optimizers
 
-| Optimizer | lr default | Use |
+| 优化器 | 默认 lr | 使用场景 |
 |---|---|---|
-| SGD | 0.01 | Vision; fine-tuning |
-| Adam | 3e-4 | General default |
-| AdamW | 1e-4 | Transformers (decoupled weight decay) |
+| SGD | 0.01 | 视觉；微调 |
+| Adam | 3e-4 | 通用默认 |
+| AdamW | 1e-4 | Transformer（解耦 weight decay）|
 
-## Mixed precision
+## 混合精度 Mixed Precision
 
 ```python
 from torch.cuda.amp import autocast, GradScaler
@@ -1099,7 +1135,7 @@ scaler.step(optimizer)
 scaler.update()
 ```
 
-## LR warmup + cosine decay
+## Warmup + 余弦衰减 LR Schedule
 
 ```python
 def lr_lambda(step):
@@ -1110,9 +1146,9 @@ def lr_lambda(step):
 
 ---
 
-# 18. Transformer — Code Implementations
+# 18. Transformer 代码实现 Code Implementations
 
-## Scaled dot-product attention
+## 缩放点积注意力 Scaled Dot-Product Attention
 
 ```python
 import torch, torch.nn.functional as F
@@ -1126,9 +1162,10 @@ def scaled_dot_product(q, k, v, mask=None):
     return F.softmax(scores, dim=-1) @ v
 ```
 
-## Causal mask
+## 因果掩码 Causal Mask
 
 ```python
+# 上三角设为 -inf，防止未来 token 信息泄露
 causal = torch.triu(torch.ones(T, T), diagonal=1).bool()
 scores.masked_fill_(causal, float('-inf'))
 ```
@@ -1142,40 +1179,43 @@ class RMSNorm(nn.Module):
         self.weight = nn.Parameter(torch.ones(d))
         self.eps = eps
     def forward(self, x):
+        # 无均值中心化，只做 RMS 归一化
         return self.weight * x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
 ```
 
-## RoPE (Rotary Position Embedding)
+## RoPE（旋转位置编码）
 
 ```python
 def apply_rope(x, cos, sin):
+    # x: (..., T, d)，按奇偶对分割
     x1, x2 = x[..., 0::2], x[..., 1::2]
     return torch.cat([x1*cos - x2*sin, x1*sin + x2*cos], dim=-1)
 ```
 
-## SwiGLU FFN (Llama-style)
+## SwiGLU FFN（Llama 风格）
 
 ```python
 class SwiGLU(nn.Module):
     def __init__(self, d, d_ff):
         super().__init__()
-        self.gate = nn.Linear(d, d_ff, bias=False)
-        self.val  = nn.Linear(d, d_ff, bias=False)
-        self.proj = nn.Linear(d_ff, d, bias=False)
+        self.gate = nn.Linear(d, d_ff, bias=False)  # 门控
+        self.val  = nn.Linear(d, d_ff, bias=False)  # 值
+        self.proj = nn.Linear(d_ff, d, bias=False)  # 下投影
     def forward(self, x):
         return self.proj(F.silu(self.gate(x)) * self.val(x))
 ```
 
-## KV cache (inference)
+## KV Cache（推理加速）
 
 ```python
-K_cache = torch.cat([K_cache, k_new], dim=-2)    # grow along T dim
+# 每步只计算新 token 的 Q，K/V 从缓存中读取
+K_cache = torch.cat([K_cache, k_new], dim=-2)    # 沿 T 维度扩展
 V_cache = torch.cat([V_cache, v_new], dim=-2)
 attn = F.softmax(q_new @ K_cache.T / d_k**0.5, dim=-1) @ V_cache
-# O(T) per step; memory grows linearly with T
+# 每步 O(T)，内存线性增长
 ```
 
-## Decoder block (Pre-LN)
+## Decoder Block（Pre-LN）
 
 ```python
 class DecoderBlock(nn.Module):
@@ -1185,16 +1225,16 @@ class DecoderBlock(nn.Module):
         self.attn = MultiHeadAttention(d, h)
         self.ffn  = SwiGLU(d, d_ff)
     def forward(self, x, mask=None):
-        x = x + self.attn(self.norm1(x), mask=mask)
+        x = x + self.attn(self.norm1(x), mask=mask)   # 残差连接
         x = x + self.ffn(self.norm2(x))
         return x
 ```
 
 ---
 
-# 19. Probability Programming Patterns
+# 19. 概率编程模板 Probability Programming Patterns
 
-## Optimal stopping (backward induction)
+## 最优停止（逆向归纳）Optimal Stopping
 
 ```python
 def expected_optimal_dice(n: int) -> float:
@@ -1202,10 +1242,10 @@ def expected_optimal_dice(n: int) -> float:
     for _ in range(n - 1):
         E = sum(max(v, E) for v in range(1, 7)) / 6
     return E
-# n=2 → 4.25, n=3 → 4.667, n→∞ → 6
+# n=2 → 4.25，n=3 → 4.667，n→∞ → 6
 ```
 
-## Majority vote probability
+## 多数投票概率 Majority Vote Probability
 
 ```python
 from math import comb
@@ -1213,7 +1253,7 @@ def majority_prob(n: int, p: float) -> float:
     return sum(comb(n, k) * p**k * (1-p)**(n-k) for k in range(n//2+1, n+1))
 ```
 
-## Top-p nucleus sampling
+## Top-p 核采样 Nucleus Sampling
 
 ```python
 def sample(logits, temperature=1.0, top_p=0.9):
@@ -1221,6 +1261,7 @@ def sample(logits, temperature=1.0, top_p=0.9):
     probs = F.softmax(logits, dim=-1)
     sorted_p, sorted_i = probs.sort(descending=True)
     cum = sorted_p.cumsum(-1)
+    # 找到累积概率超过 top_p 的位置，屏蔽后面的 token
     mask = cum > top_p
     mask[..., 1:] = mask[..., :-1].clone(); mask[..., 0] = False
     sorted_p[mask] = 0
@@ -1229,7 +1270,7 @@ def sample(logits, temperature=1.0, top_p=0.9):
     return sorted_i.gather(-1, idx)
 ```
 
-## Reservoir sampling (stream, maintain k samples)
+## 水库采样 Reservoir Sampling（数据流，保留 k 个）
 
 ```python
 import random
@@ -1241,21 +1282,21 @@ def reservoir_sample(stream, k):
         else:
             j = random.randint(0, i)
             if j < k:
-                reservoir[j] = item
+                reservoir[j] = item    # 等概率替换
     return reservoir
 ```
 
-## Rand7 from Rand5 (rejection sampling)
+## 用 Rand5 构造 Rand7（拒绝采样）
 
 ```python
 def rand7():
     while True:
-        x = (rand5() - 1) * 5 + (rand5() - 1)   # uniform [0, 24]
-        if x < 21:                                  # reject 21-24
+        x = (rand5() - 1) * 5 + (rand5() - 1)   # 均匀分布在 [0, 24]
+        if x < 21:                                  # 拒绝 21-24
             return x % 7 + 1
 ```
 
-## Box-Muller (Uniform → Normal)
+## Box-Muller 变换（均匀 → 正态）
 
 ```python
 import math, random
@@ -1263,108 +1304,106 @@ def box_muller():
     u1, u2 = random.random(), random.random()
     z0 = math.sqrt(-2 * math.log(u1)) * math.cos(2 * math.pi * u2)
     z1 = math.sqrt(-2 * math.log(u1)) * math.sin(2 * math.pi * u2)
-    return z0, z1  # both ~ N(0, 1)
+    return z0, z1  # 两个均为 N(0, 1)
 ```
 
 ---
 
-# PART IV — BEHAVIORAL
+# 第四部分 — 行为面试 Behavioral
 
 ---
 
-# 20. Interview Strategy & Communication
+# 20. 面试策略与沟通 Interview Strategy & Communication
 
-## Coding problem rhythm
+## 编程题解题节奏 Coding Problem Rhythm
 
-1. **Restate** the problem in your own words
-2. **Examples** — give one yourself; ask for edge cases
-3. **Brute force** first; state complexity
-4. **Optimize** — narrate the insight
-5. **Code** — clean variable names, small functions
-6. **Trace** — walk through one example step by step
-7. **Discuss** complexity and alternatives
+1. **复述题意** Restate：用自己的话说一遍
+2. **举例** Examples：自己给一个例子；问边界情况
+3. **暴力解** Brute force first：先说暴力，报复杂度
+4. **优化** Optimize：口述优化思路
+5. **写代码** Code：变量名清晰，小函数
+6. **手动追踪** Trace：走一遍具体例子
+7. **讨论复杂度** Complexity：时间+空间，有无改进空间
 
-## Probability problem rhythm
+## 概率题解题节奏 Probability Problem Rhythm
 
-1. **Define your random variable**: "Let X = ..."
-2. **State independence / distribution assumptions**
-3. **Pick the tool**: linearity / Bayes / conditioning / indicator method
-4. **Compute**, then **sanity-check** (e.g., E[max] + E[min] = E[sum])
-5. **For stopping problems**: verbalize the threshold rule
+1. **定义随机变量**："设 X = ..."
+2. **说明独立性/分布假设**
+3. **选择工具**：线性期望 / 贝叶斯 / 条件期望 / 示性变量
+4. **计算，然后验证**（如 E[max] + E[min] = E[sum]）
+5. **停止问题** → 口述阈值规则
 
-## Stats/A-B testing rhythm
+## 统计/A/B 测试节奏 Stats Rhythm
 
-1. **Define H₀ and H₁** explicitly
-2. **State α and desired power**
-3. **Calculate sample size** before running
-4. **Identify potential confounds** (Simpson's paradox, selection bias)
-5. **Report effect size**, not just p-value
+1. **明确 H₀ 和 H₁**
+2. **说明 α 和目标 power**
+3. **先计算样本量**，再开始实验
+4. **识别潜在混淆变量**（辛普森悖论、选择偏差）
+5. **报告效应大小**，不只是 p 值
 
-## STAR format (behavioral)
+## STAR 格式（行为面试）
 
-> **S**ituation → **T**ask → **A**ction → **R**esult (with a metric)
+> **S**ituation 情境 → **T**ask 任务 → **A**ction 行动 → **R**esult 结果（**带数字指标！**）
 
-## "Explain X" template
+## 解释 X 的模板 "Explain X" Template
 
-1. **One-sentence definition**
-2. **Why it matters / when used**
-3. **Concrete example**
-4. **Trade-offs / failure modes**
+1. **一句话定义** One-sentence definition
+2. **为什么重要 / 何时使用**
+3. **具体例子** Concrete example
+4. **权衡与失败模式** Trade-offs / failure modes
 
-## Power phrases
+## 有力的表达 Power Phrases
 
-- "Let me clarify the input format..."
-- "I'll start with brute force O(n²), then optimize."
-- "By linearity of expectation, even though variables are dependent..."
-- "This is backward induction — let me define V[k]..."
-- "Two spiral patterns: shrinking boundaries vs expanding step."
-- "I'm assuming independence here — worth noting if that breaks."
-- "p-value is the probability of data this extreme **given H₀**, not the probability H₀ is true."
+- "先让我确认一下输入格式..." Let me clarify the input format...
+- "先给暴力解 O(n²)，再优化。" Start with brute force, then optimize.
+- "由期望的线性性，即使变量不独立..." By linearity of expectation, even if variables are dependent...
+- "这是逆向归纳——让我定义 V[k]..." This is backward induction — let me define V[k]...
+- "p 值是在 H₀ 为真的前提下看到当前数据的概率，不是 H₀ 为真的概率。" p-value is P(data this extreme | H₀), NOT P(H₀ is true).
+- "我在这里假设独立性——如果不成立需要注意。" I'm assuming independence here — worth flagging if that breaks.
 
-## Questions to ask interviewers
+## 问面试官的问题 Questions to Ask
 
-- "What does a typical on-call / production-ML burden look like?"
-- "What's the team's ratio of research to applied work?"
-- "How do you measure success in this role at 6 months?"
-- "What's the hardest engineering problem the team solved this year?"
+- "这个团队日常 on-call / 生产维护的负担大概是怎样的？"
+- "团队研究与应用工作的比例大概是多少？"
+- "入职 6 个月时，如何衡量这个岗位的成功？"
+- "今年团队解决的最难的工程问题是什么？"
 
 ---
 
-# 21. Appendix — Must-Know Numbers
+# 21. 附录：必背数字 Appendix — Must-Know Numbers
 
-## Mathematical constants
+## 数学常数 Mathematical Constants
 
-| Constant | Value | Use |
+| 常数 Constant | 值 Value | 用途 Use |
 |---|---|---|
-| e | 2.71828 | Secretary cutoff: n/e |
-| 1/e | 0.368 | Secretary P(success) |
-| 1 − 1/e | 0.632 | Fraction seen in bootstrap |
-| ln 2 | 0.693 | Exponential half-life |
-| π²/6 | 1.645 | Coupon collector variance coefficient |
-| Euler γ | 0.577 | Harmonic number offset |
-| √(2ln2) | 1.177 | FWHM/σ half-factor |
-| 2√(2ln2) | 2.355 | FWHM = 2.355σ for Gaussian |
+| e | 2.71828 | 秘书问题截止点 n/e |
+| 1/e | 0.368 | 秘书问题成功概率 |
+| 1 − 1/e | 0.632 | Bootstrap 中被选到的比例 |
+| ln 2 | 0.693 | 指数分布半衰期 |
+| π²/6 | 1.645 | 优惠券收集方差系数 |
+| 欧拉常数 γ | 0.577 | 调和级数偏移 Harmonic offset |
+| 2√(2ln2) | 2.355 | 高斯 FWHM = 2.355σ |
 
-## Standard normal critical values
+## 标准正态分位数（必背）Standard Normal Critical Values
 
-| α (two-tailed) | z_{α/2} | Use for CI |
+| α（双尾）| z_{α/2} | 置信区间 |
 |---|---|---|
 | 0.10 | 1.645 | 90% CI |
-| 0.05 | **1.960** | **95% CI** ← memorize |
+| 0.05 | **1.960** | **95% CI ← 背这个** |
 | 0.01 | 2.576 | 99% CI |
 
-## Sample size rules of thumb
+## 样本量经验值 Sample Size Rules of Thumb
 
-| Test | Minimum n (each group) |
+| 场景 Test | 每组最小 n |
 |---|---|
-| CTR 10%→12%, α=0.05, power=80% | ~3,800 |
-| CTR 10%→11%, α=0.05, power=80% | ~14,700 |
-| Rough rule: (2.8/Δ)² · p(1-p) | — |
-| CLT kicks in | n ≥ 30 |
+| CTR 10%→12%，α=0.05，power=80% | ~3,800 |
+| CTR 10%→11%，α=0.05，power=80% | ~14,700 |
+| CLT 开始生效 | n ≥ 30 |
+| 粗略估计 Rough rule | n ≈ (2.8/Δ)² · p(1-p) |
 
-## Model architecture landmarks
+## 模型架构参数 Model Architecture Landmarks
 
-| Model | Params | d_model | Layers | Heads |
+| 模型 | 参数量 Params | d_model | 层数 Layers | 注意力头 Heads |
 |---|---|---|---|---|
 | BERT-base | 110M | 768 | 12 | 12 |
 | GPT-2 small | 117M | 768 | 12 | 12 |
@@ -1372,9 +1411,9 @@ def box_muller():
 | Llama-2 7B | 7B | 4096 | 32 | 32 |
 | Llama-2 70B | 70B | 8192 | 80 | 64 |
 
-## Optimizer defaults
+## 优化器默认参数 Optimizer Defaults
 
-| Optimizer | lr | β₁ | β₂ | ε |
+| 优化器 | lr | β₁ | β₂ | ε |
 |---|---|---|---|---|
 | Adam | 3e-4 | 0.9 | 0.999 | 1e-8 |
 | AdamW | 1e-4 | 0.9 | 0.999 | 1e-8 |
@@ -1382,6 +1421,6 @@ def box_muller():
 
 ---
 
-> **Final reminder:** When stuck, **say what you're thinking out loud**. Interviewers grade reasoning as much as the final answer. Name your variables, state your invariants, sanity-check small cases, and acknowledge edge conditions before moving on.
+> **最后提醒 Final Reminder：** 卡住时，**大声说出你的思路**。面试官评分的是推理过程，不只是最终答案。命名变量、说明不变量、用小例子验证、承认边界情况，然后继续推进。
 >
-> **Good luck!**
+> **加油！Good luck!**
