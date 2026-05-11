@@ -42,3 +42,39 @@ The JSON content files (`content_en.json`, `content_zh.json`) are the single sou
 - Each question follows the format: `### Q{N}: {question}` → `**回答：**` → numbered points → `> **Follow-up 提示：**` blockquote.
 - Use markdown tables for comparisons, ordered lists for sequential logic, unordered lists for parallel items.
 - Technical terms use inline code formatting (e.g., `Graph-RAG`, `sub-agent`).
+
+## GitHub Markdown Math Rendering
+
+GitHub's CommonMark parser processes `_` as italic syntax **before** MathJax renders math. This breaks LaTeX subscripts in `$...$` and `$$...$$` blocks.
+
+**Rule**: Always use curly braces for subscripts — `_{k}` not `_k`, `^{2}` not `^2` for multi-char superscripts.
+
+Bad: `$\pi_1 = 0.6$` → renders as `π` followed by italic `1 = 0.6`  
+Good: `$\pi_{1} = 0.6$`
+
+When writing or editing any `.md` file with LaTeX math, ensure all subscripts use `_{...}` notation. To batch-fix an existing file:
+
+```python
+import re
+
+def fix_subscripts_in_math(text):
+    result = []
+    i = 0
+    while i < len(text):
+        if text[i:i+2] == '$$':
+            end = text.find('$$', i+2)
+            if end == -1: result.append(text[i:]); break
+            result.append(re.sub(r'_([^{}\s\\])', r'_{\1}', text[i:end+2]))
+            i = end + 2
+        elif text[i] == '$' and (i == 0 or text[i-1] != '\\'):
+            end = i + 1
+            while end < len(text) and text[end] != '$':
+                if text[end] == '\\': end += 1
+                end += 1
+            if end >= len(text): result.append(text[i:]); break
+            result.append(re.sub(r'_([^{}\s\\])', r'_{\1}', text[i:end+1]))
+            i = end + 1
+        else:
+            result.append(text[i]); i += 1
+    return ''.join(result)
+```
