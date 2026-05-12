@@ -25,7 +25,7 @@
 
 一个 block 包含 header + body：
 - **Header：** previous block hash、timestamp、block height、Merkle root、nonce/validator info
-- **Body：** 一批 transaction（取决于链：Bitcoin 一个 block 约 2k-3k tx，Ethereum 约 100-300 tx）
+- **Body：** 一批 transaction（取决于链：Bitcoin 一个 block 约 2k-3k tx，Ethereum 约 100-400 tx）
 
 每个 block header 里嵌入了 **previous block hash**，所以任何人篡改历史 block 会导致后续所有 block 的 hash 校验失败。这种结构对 ML 的实际意义：
 - **天然的时间戳：** `block_height` 和 `block_timestamp` 是可信的时间字段，可以直接作为 sequence 排序键。
@@ -111,7 +111,7 @@ Ethereum 用 **account-based model**：每个 address 有显式的 `balance` 字
 | **value** | 转账金额（单位 wei，$1 ETH = 10^{18}$ wei） | 金额特征：分布、round number 检测、与历史均值的偏离 |
 | **gas_price** | 发起方愿意为每单位 gas 支付的价格（Gwei） | 异常高的 gas_price 往往是 MEV bot / 抢跑 / panic 行为 |
 | **gas_limit** | 该 tx 允许消耗的最大 gas | 标准转账固定 21000；高 gas_limit 意味着复杂 contract interaction |
-| **gas_used** | 实际消耗的 gas | 复杂度指标；`gas_used == gas_limit` 通常意味着 tx revert（out-of-gas） |
+| **gas_used** | 实际消耗的 gas | 复杂度指标；`gas_used == gas_limit` 可能是 out-of-gas revert 的信号（但 revert 也可在 gas 未耗尽时发生，例如通过 REVERT opcode） |
 | **nonce** | 该 from address 已发送过的 tx 数量（从 0 递增） | 单调递增，可以 detect address activity intensity；也是反 replay attack 的设计 |
 | **input** / **data** | 调用 contract 时的 calldata，前 4 字节是 function selector | **核心特征源**：解码后可以知道用户调了哪个 contract method（swap / transfer / approve / bridge） |
 | **block_timestamp** | Tx 被打包的时间 | Sequence 排序键、time-of-day / day-of-week feature |
@@ -165,7 +165,7 @@ Ethereum 用 **account-based model**：每个 address 有显式的 `balance` 字
 
 ### 3.5 其他重要 entity（识别它们能极大提高 feature 质量）
 - **CEX hot/cold wallet：** Binance、OKX、Coinbase 等交易所的已知地址。资金流入/流出 CEX 是 KYT (Know Your Transaction) 的关键 boundary
-- **Mixer：** Tornado Cash、Wasabi CoinJoin、Samourai Whirlpool —— 资金进入 mixer 后下游交易难以追踪，是 high-risk signal
+- **Mixer：** Tornado Cash、Wasabi CoinJoin、Samourai Whirlpool（2024年被 DOJ 取缔） —— 资金进入 mixer 后下游交易难以追踪，是 high-risk signal
 - **Sanctioned address：** OFAC SDN List 上的链上地址，合规上必须实时拦截
 
 ---
@@ -432,7 +432,7 @@ UTXO 和 account model 是两种根本不同的链上数据范式，差异远不
 Flash loan attack 是 DeFi 独有的攻击模式，幸运的是它在链上的 signal 非常 distinctive，detector 设计相对清晰。
 
 1. **核心 atomicity signature**：Flash loan 的本质是"借-用-还" 必须发生在同一笔 transaction 内（否则 revert）。这导致整个攻击在链上呈现为 **单笔 tx 内包含极其复杂的 internal call sequence**。具体可观测特征：
-   - 单笔 tx 的 `gas_used` 异常高，通常 > 1M（普通 ERC-20 transfer ~50k，标准 DEX swap ~150-300k，flash loan attack 常见 2M-10M）
+   - 单笔 tx 的 `gas_used` 异常高，通常 > 1M（普通 ERC-20 transfer ~50k，标准 DEX swap ~100-250k，flash loan attack 常见 2M-10M）
    - 单 tx 内 internal call count 通常 > 20，跨越多个不同 protocol contract
    - Tx trace 中出现 `flashLoan` / `flashBorrow` / `executeOperation` 等 Aave/dYdX/Balancer 的 flash loan event marker
 
