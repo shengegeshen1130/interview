@@ -91,7 +91,7 @@ DeBERTa 注意到 MLM 解码时除了 relative position，**absolute position** 
 EMD 的做法：在最后几层 transformer 之前才注入 absolute position embedding，让大部分层只用相对位置，最后才考虑绝对位置。这种"延迟注入"让 representation 学习和位置 grounding 各司其职。
 
 **结果：**
-- DeBERTa-large（350M）在 SuperGLUE 上得分 89.9，首次超过人类 baseline 89.8
+- DeBERTa-xxlarge（1.5B）在 SuperGLUE 上得分 89.9，首次超过人类 baseline 89.8
 - DeBERTa-v3（用 ELECTRA-style replaced token detection 替代 MLM）进一步提升
 
 **对 fraud detection 的启发：** 链上 tx sequence 的 "position" 含义比 NLP 更复杂——既有 sequence index，又有 timestamp delta、block height delta。DeBERTa 把 content 和 position 显式分离的思想对处理 tx sequence 特别合适，可以把 timestamp delta 当作单独的 position channel 而不污染 tx feature embedding。
@@ -155,12 +155,12 @@ GPT 系列是 **decoder-only + causal LM** 的代表，每一代都是 "scale up
 | **GPT-1** | 2018 | 117M | 首个 decoder-only pretrain + fine-tune 范式；12 层；用 BookCorpus 训练 |
 | **GPT-2** | 2019 | 117M / 345M / 762M / 1.5B | 强调 zero-shot；WebText 数据；首次展示 in-context generation 能力；OpenAI 当时拒绝 release 1.5B 版本（"too dangerous"） |
 | **GPT-3** | 2020 | 175B（96 层、$d=12288$、96 heads） | 首次 in-context learning：few-shot prompt 不微调即可解多种任务；scaling law 验证 |
-| **GPT-4** | 2023 | 未公开（估计 1T+ MoE） | 多模态（image+text）；context 32K → 128K；RLHF + Constitutional AI；闭源 |
+| **GPT-4** | 2023 | 未公开（估计 1T+ MoE） | 多模态（image+text）；context 32K → 128K；RLHF + instruction following；tool use；闭源 |
 
 **演进趋势：**
 - **不改架构：** GPT-1/2/3 几乎是同一架构（decoder-only + causal mask + learned PE），区别是 scale
 - **去 fine-tune 化：** GPT-3 之后主流不再 task-specific fine-tune，而是 prompt engineering + in-context learning
-- **后训练越来越重：** GPT-4 大量精力在 RLHF、Constitutional AI、tool use，pretrain 之后的工作占比剧增
+- **后训练越来越重：** GPT-4 大量精力在 RLHF、instruction following、tool use，pretrain 之后的工作占比剧增
 
 ### 2.2 GPT vs BERT 在 fraud detection 的选型
 
@@ -507,11 +507,9 @@ $$\text{AssDis}(i) = \frac{1}{2}\left[\text{KL}(P_{i,:} \| S_{i,:}) + \text{KL}(
 **Self-conditioning：** T2 的输入包含 T1 的重构结果，等于 "在 T1 的猜测基础上 refine"。这种 self-conditioning 让模型在 boundary anomaly（即不太明显的异常）上更敏感。
 
 **Adversarial training：**
-- 设置一个 "discriminator" 角色：判断输入是 ground truth 还是 reconstruction
-- T2 同时被两个目标驱动：① 尽可能 reconstruct（reconstruction loss），② 骗过 discriminator
-- 对抗训练让 T2 学到更精细的 representation，对小 deviation 也敏感
+- T2 使用对抗目标训练——对 T1 重建误差高的窗口放大关注（adversarial focus），而不是使用独立的 discriminator 网络。这个自聚焦机制（self-focusing mechanism）使模型对边界异常更敏感。
 
-**Anomaly score = reconstruction error：** 经过对抗训练后，normal data 重构得非常准（discriminator 都骗过）；anomalous data 因为不在分布内，重构误差大。
+**Anomaly score = reconstruction error：** 经过对抗训练后，normal data 重构误差极低；anomalous data 因为不在分布内，T1 重建误差大，T2 的对抗聚焦进一步放大这一差距，最终重构误差显著升高。
 
 **对比 Anomaly Transformer：**
 
@@ -538,7 +536,7 @@ $$\text{AssDis}(i) = \frac{1}{2}\left[\text{KL}(P_{i,:} \| S_{i,:}) + \text{KL}(
 
 ### 7.1 Graphormer (2021, Microsoft)
 
-**论文：** Ying et al., *Do Transformers Really Perform Bad for Graph Representation?* (NeurIPS 2021)。Graphormer **赢得了 OGB-LSC 2021 graph-level prediction track 冠军**，是 graph transformer 早期标杆。
+**论文：** Ying et al., *Do Transformers Really Perform Badly for Graph Representation?* (NeurIPS 2021)。Graphormer **赢得了 OGB-LSC 2021 graph-level prediction track 冠军**，是 graph transformer 早期标杆。
 
 **核心 insight：** vanilla Transformer 用于 graph 时缺少图结构信息（attention 是 token-pair 全连接，不知道图拓扑）。Graphormer 通过 **三种编码** 把图结构注入 attention：
 
