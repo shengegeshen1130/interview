@@ -383,8 +383,8 @@ $$\text{IG}_{i}(x) = (x_{i} - x'_{i}) \times \int_{0}^{1} \frac{\partial F(x' + 
 
 **延迟优化技术：**
 
-- **知识蒸馏（Knowledge Distillation）：** 用大模型（teacher）输出的 soft probability 训练小模型（student），student 保留 teacher 约 80-90% 的精度，但推理速度快 5-10 倍
-- **INT8 量化：** 将 float32 权重量化为 int8，内存占用减半，CPU/GPU 推理速度提升约 2-4 倍，精度损失通常 <1% AUC
+- **知识蒸馏（Knowledge Distillation）：** 用大模型（teacher）输出的 soft probability 训练小模型（student），student 保留 teacher 约 80-90% 的精度，但推理速度快 **3-6 倍**（取决于 batch size 和硬件平台）
+- **INT8 量化：** 将 float32 权重量化为 int8，内存占用**降至约四分之一**，CPU/GPU 推理速度提升约 2-4 倍，精度损失通常 <1% AUC
 - **Attention Head Pruning：** 移除 attention 权重接近均匀分布的"无效"head（通常 40-60% 的 head 可安全移除），减少计算量
 - **ONNX Runtime：** 将 PyTorch 模型导出为 ONNX 格式，利用 ONNX Runtime 的算子融合和硬件特定优化（CUDA / CoreML / TensorRT），相比原生 PyTorch 通常有 2-5 倍加速
 
@@ -415,7 +415,7 @@ DeFi 欺诈与传统金融欺诈在几个维度上有根本性不同，必须在
 Flash loan 攻击的整个"借-攻击-还"发生在 **一笔 transaction** 内。这意味着：
 - 序列模型（基于 address 历史 tx 序列）无法在 tx 之间看到"准备动作"，只能 post-hoc 分析
 - 正确的检测角度是 **tx 内 trace 分析**（单 tx 的 internal call sequence），而非地址行为序列
-- 特征应包括：`gas_used > 500K`、`internal_call_count > 10`、`flashLoan_event_present`、`price_deviation_in_block > 20%`
+- 特征应包括：主要信号：`flashLoan_event_present`（Aave/Uniswap 的 FlashLoan event log）；辅助信号：`gas_used > 1M`（单笔 gas 消耗极高，500K 以下的阈值会对多跳 swap、yield aggregator 等合法 DeFi 交易产生大量误报）、`internal_call_count > 10`、`price_deviation_in_block > 20%`
 
 **Smart Contract ABI 解码**
 
@@ -566,14 +566,13 @@ workflow.add_node("analyze_fund_flow", analyze_fund_flow)
 workflow.add_node("assess_defi_patterns", assess_defi_patterns)
 workflow.add_node("generate_report", generate_report)
 
-# 定义边（前3个节点可并行，然后汇入 generate_report）
+# 定义边（顺序执行：每个 sub-agent 将自己的发现追加到 shared state，再传入下一节点）
 workflow.set_entry_point("fetch_onchain_data")
 workflow.add_edge("fetch_onchain_data", "query_blacklist")
-workflow.add_edge("fetch_onchain_data", "analyze_fund_flow")
-workflow.add_edge("fetch_onchain_data", "assess_defi_patterns")
-workflow.add_edge("query_blacklist", "generate_report")
-workflow.add_edge("analyze_fund_flow", "generate_report")
+workflow.add_edge("query_blacklist", "analyze_fund_flow")
+workflow.add_edge("analyze_fund_flow", "assess_defi_patterns")
 workflow.add_edge("assess_defi_patterns", "generate_report")
+# human_review node (assumed pre-registered: workflow.add_node("human_review", human_review_fn))
 workflow.add_conditional_edges(
     "generate_report",
     lambda s: "human_review" if s["human_review_required"] else END
@@ -584,7 +583,7 @@ app = workflow.compile()
 
 **与 AML Investigation Mate 项目的关联：**
 
-这套 LangGraph multi-agent 架构与我之前在 **AML Investigation Mate** 项目中构建的系统高度一致——同样使用 LangGraph StateGraph 协调多个 sub-agent，同样以 **Neo4j 作为图数据库**存储交易关系网络，同样用 Cypher 查询追踪资金流，同样最终输出供人工审核的调查报告。
+这套 LangGraph multi-agent 架构与我之前在 **AML Investigation Mate** 项目中构建的系统高度一致——同样使用 LangGraph StateGraph 协调多个 sub-agent **顺序执行**（每个节点将自己的发现写入 shared state 后传入下一节点，最终由 `generate_report` 汇总所有发现），同样以 **Neo4j 作为图数据库**存储交易关系网络，同样用 Cypher 查询追踪资金流，同样最终输出供人工审核的调查报告。
 
 核心区别在于应用场景：AML Investigation Mate 面向传统金融的 AML 案件调查，输入是可疑交易报告（STR）；OKX 场景面向链上地址的实时风险评估，输入是高风险地址触发的自动告警。两者的 agent 框架和 Neo4j 集成模式完全可复用，是直接可以迁移的工程经验。
 
