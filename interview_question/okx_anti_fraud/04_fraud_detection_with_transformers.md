@@ -157,7 +157,9 @@ tx_token = {
 
 针对 1:1000 的类别不平衡，使用 **Focal Loss** 替代标准 Binary Cross-Entropy：
 
-$$FL(p_{t}) = -\alpha_{t}(1-p_{t})^{\gamma}\log(p_{t})$$
+$$
+FL(p_{t}) = -\alpha_{t}(1-p_{t})^{\gamma}\log(p_{t})
+$$
 
 其中：
 - $p_{t}$ 是模型对正确类别的预测概率（欺诈样本用预测为欺诈的概率，正常样本用预测为正常的概率）
@@ -258,7 +260,7 @@ h_graph = GNN(address_node_features, adjacency)
 |---------|------|---------|
 | **Concatenation + MLP** | `MLP([h_graph; h_seq])` → P(fraud) | 两路信息相对独立，快速工程化实现 |
 | **Cross-Attention** | `h_seq` 作为 query，`h_graph` 的邻居 token 序列作为 key/value，允许序列模型 attend to 图邻居信息 | 图和序列信息高度关联时效果更好，但实现更复杂 |
-| **简单加权平均** | $\alpha \cdot \text{score\_graph} + (1-\alpha) \cdot \text{score\_seq}$，$\alpha$ 可学习 | 作为 ensemble baseline，快速验证两路信息的互补性 |
+| **简单加权平均** | $\alpha \cdot s_{\mathrm{graph}} + (1-\alpha) \cdot s_{\mathrm{seq}}$，$\alpha$ 可学习 | 作为 ensemble baseline，快速验证两路信息的互补性 |
 
 ---
 
@@ -353,7 +355,9 @@ OKX 作为持牌 CEX，对风控决策有合规层面的可解释性要求（SAR
 
 Integrated Gradients（Sundararajan et al., 2017）通过沿从 baseline（全零序列）到实际输入的路径积分梯度，给出每个输入 feature 的精确归因：
 
-$$\text{IG}_{i}(x) = (x_{i} - x'_{i}) \times \int_{0}^{1} \frac{\partial F(x' + \alpha(x-x'))}{\partial x_{i}} d\alpha$$
+$$
+\text{IG}_{i}(x) = (x_{i} - x'_{i}) \times \int_{0}^{1} \frac{\partial F(x' + \alpha(x-x'))}{\partial x_{i}} d\alpha
+$$
 
 其中 $x'$ 是 baseline 输入，$\alpha \in [0,1]$ 是插值系数，$F(\cdot)$ 是模型输出。满足 **完整性公理**（所有 feature 归因之和等于模型输出与 baseline 输出之差），理论上比 attention 更可靠。
 
@@ -691,7 +695,9 @@ app = workflow.compile()
 
 2. **Integrated Gradients（推荐，理论可靠）：** 沿从 baseline $x'$（全零或均值序列）到实际输入 $x$ 的路径积分梯度，精确量化每个 feature 对预测的贡献：
 
-   $$\text{IG}_{i}(x) = (x_{i} - x'_{i}) \times \int_{0}^{1} \frac{\partial F(x' + \alpha(x-x'))}{\partial x_{i}} d\alpha$$
+$$
+\text{IG}_{i}(x) = (x_{i} - x'_{i}) \times \int_{0}^{1} \frac{\partial F(x' + \alpha(x-x'))}{\partial x_{i}} d\alpha
+$$
 
    满足 **完整性公理**（所有 feature 的 IG 之和 = $F(x) - F(x')$），理论上比 attention 更可靠。实现上用 Captum 库（Facebook Research），对一个 256-tx 序列的 IG 计算约需 500ms（可以接受，因为这是在 Layer 3 异步分析中使用）。
 

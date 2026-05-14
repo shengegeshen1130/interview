@@ -398,7 +398,7 @@ UTXO 和 account model 是两种根本不同的链上数据范式，差异远不
 
 2. **Token encoding（每笔 tx → embedding）**：每笔 tx 不是单个 categorical token，而是一组 field 的组合：
    - **Discrete fields：** direction (in/out)、counterparty_cluster_id（hashed or top-N + OOV bucket）、method_id（取 input 前 4 字节解码后的 function name，常见的 transfer/approve/swap/bridge 等单独 token，长尾合并）、token_id（ETH / USDT / USDC / 其他）、interaction_type（EOA-to-EOA / EOA-to-DEX / EOA-to-bridge / EOA-to-mixer 等粗粒度 contract tag）
-   - **Continuous fields：** $\log_{10}(value\_usd + 1)$、$\log_{10}(gas\_price)$、$\log_{10}(\Delta t + 1)$（距离上一笔的秒数）、$\text{value\_to\_balance\_ratio}$
+   - **Continuous fields：** `log10(value_usd + 1)`、`log10(gas_price)`、$\log_{10}(\Delta t + 1)$（距离上一笔的秒数）、`value_to_balance_ratio`
    - **Token embedding：** 对每个 discrete field 学一个 embedding table，对 continuous field 做 normalize 后过一个小 MLP 或 sinusoidal bucket embedding，然后把所有 field 的 vector concat / sum / cross-attention 融合成最终的 token vector $x_{t}$
 
 3. **Position encoding 设计**：不要简单用 index-based positional embedding。我会用两层位置信号：
