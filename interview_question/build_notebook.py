@@ -1,4 +1,4 @@
-"""Combine the 14 transformer-component solution notebooks into a single notebook.
+"""Combine the transformer-component solution notebooks into a single notebook.
 
 Reads each `*-{name}.ipynb` (the solved version, not `*-Question.ipynb`) under
 `torch/transformer/NN-Name/` and concatenates them with section dividers.
@@ -28,6 +28,7 @@ COMPONENTS = [
     ("12-Rotary-Positional-Embedding",      "12 · Rotary Positional Embedding (RoPE)"),
     ("13-KV-Cache",                         "13 · KV Cache"),
     ("14-Transformer-Decoder-Block",        "14 · Transformer Decoder Block"),
+    ("15-Efficient-Attention",              "15 · Efficient Attention Variants"),
 ]
 
 
@@ -68,7 +69,7 @@ def build_notebook() -> dict:
         make_md_cell(
             "# 🧠 Transformer Components — Combined Notebook\n"
             "\n"
-            "All 14 transformer-component solutions from `torch/transformer/` in one notebook.\n"
+            "All transformer-component solutions from `torch/transformer/` in one notebook.\n"
             "\n"
             "**Sections (in order):**\n"
             "\n"
